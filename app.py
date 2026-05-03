@@ -354,7 +354,11 @@ def process_event(event):
                 get_waiting_keyboard()
             )
     # Любое другое сообщение игнорируется
-
+    
+@app.route('/', methods=['GET'])
+def handle_health_check():
+    """Health check для Render"""
+    return 'OK', 200
 # ==================================================
 #  ЗАПУСК (для локального тестирования)
 # ==================================================
