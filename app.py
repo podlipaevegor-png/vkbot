@@ -3,9 +3,9 @@
 import os
 import json
 import logging
+from pathlib import Path
 from flask import Flask, request, jsonify
 import vk_api
-from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.utils import get_random_id
 from vk_api.upload import VkUpload
@@ -20,41 +20,111 @@ OPERATOR_ID = int(os.environ.get('OPERATOR_ID', 0))
 REVIEW_LINK = os.environ.get('REVIEW_LINK', 'https://example.com')
 REVIEW_LINK2 = os.environ.get('REVIEW_LINK2', 'https://vk.com/showlandarz')
 
+# Определяем абсолютный путь к папке с картинками
+BASE_DIR = Path(__file__).resolve().parent
+IMAGES_DIR = BASE_DIR / 'images'
+
 # ==================================================
-#  ДАННЫЕ УСЛУГ (полностью совпадают с твоими)
+#  ДАННЫЕ УСЛУГ (новая структура: images — список путей)
 # ==================================================
 MAIN_SERVICES = {
     'birthday_1_4': [
-        {'image': 'images/buba1.jpg','image': 'images/buba2.jpg','image': 'images/buba3.jpg', 'text': '🧀 В ГОСТИ К ДОМОВЕНКУ🧀\nСамый главный пушистый хулиган и его подруга мышка знают все о веселом празднике. Похулиганим вместе?\nВ программе вас ждут:\n⭐️ Путешествие по тропинке домового\n⭐️ Сладости от домовенка и гигантский сыр\n⭐️ Пазл-головоломка от Мышки \n⭐️ Сырные гонки и путешествие в мультик\n⭐️ Веселые танцы и многое другое \nПрограмма для детей от 3 до 7 лет\nСтоимость - 6000 рублей\n(1 час программы, 2 героя, музыкальное оформление, микрофоны, тематический реквизит, вынос тортика и общее фото)'},
-        {'image': 'images/kot1.jpg','image': 'images/kot2.jpg','image': 'images/kot3.jpg', 'text': '❤️ МЯУ-ПУТЕШЕСТВИЕ ❤️\n\n Коржик, Карамелька и Компот попадают на праздник и не знают, как вернуться домой. И только дети смогут им помочь…\nВ программе их ждут:\n⭐️ Знакомство с жителями Котополиса\n⭐️ Путешествие через кото-тоннель\n⭐️ Догонялки с папой-котиком \n⭐️ Рыбалка для маленьких друзей \n⭐️ Настоящий парк аттракционов \n⭐️ Веселая кото-карусель\n⭐️ Мяу-танцы и многое другое\n\nСтоимость:\n2 героя - 6000 рублей\n3 героя - 7500 рублей\n(Коржик, Карамелька и Компот)\n(1 час программы, тематическое музыкальное оформление, микрофоны, тематический реквизит, вынос тортика и общее фото)\nПрограмма для детей от 3 до 7 лет\nПосмотреть видео с программы можно в нашем актуальном: \n https://vk.com/narrative-213072049_87260'},
-        {'image': 'images/edin1','image': 'images/edin2','image': 'images/edin3', 'text': '💖 ПОТЕРЯННАЯ ПРИНЦЕССА ЕДИНОРОГОВ 💖 (VIP)\n\nВолшебная страна единорогов исчезает, потому что дети по всему миру перестают верить чудеса. Сможет ли именинница и ее друзья спасти волшебство и найти пропавшую много лет назад принцессу единорогов? А быть может, потерянная принцесса это она сама? \n\nВ программе: \n⭐ Знакомство с единорожкой Искоркой \n⭐ Путешествие по радужному мосту \n⭐ Сбор разбитого зеркала чудес \n⭐ Догонялки с единорожкой Соней \n⭐ Переправа по розовым облакам \n⭐ Танцы в долине мыльных пузырей \n⭐ Волшебное озеро желаний \n⭐️ Светящаяся шкатулка с кристаллами, зажечь которую сможет лишь именинница\nПрограмма для детей от 3 до 7 лет\n\nСтоимость - 6500 рублей (1 час) \n\nВ стоимость программы входит: \n📍Работа 2-х артистов в костюмах категории VIP \n📍Мощное музыкальное оборудование (колонка, микрофоны, тематическая музыка к каждой игре) \n📍Уникальная авторская программа и реквизит в тематике праздника\n📍 Торжественный вынос тортика \n📍Выезд в пределах города Арзамас'}
+        {
+            'images': [
+                'buba1.jpg',
+                'buba2.jpg',
+                'buba3.jpg'
+            ],
+            'text': '🧀 В ГОСТИ К ДОМОВЕНКУ 🧀\n\nСамый главный пушистый хулиган и его подруга мышка знают все о веселом празднике. Похулиганим вместе?\n\nВ программе вас ждут:\n⭐️ Путешествие по тропинке домового\n⭐️ Сладости от домовенка и гигантский сыр\n⭐️ Пазл-головоломка от Мышки \n⭐️ Сырные гонки и путешествие в мультик\n⭐️ Веселые танцы и многое другое \n\nПрограмма для детей от 3 до 7 лет\nСтоимость - 6000 рублей\n(1 час программы, 2 героя, музыкальное оформление, микрофоны, тематический реквизит, вынос тортика и общее фото)'
+        },
+        {
+            'images': [
+                'kot1.jpg',
+                'kot2.jpg',
+                'kot3.jpg'
+            ],
+            'text': '❤️ МЯУ-ПУТЕШЕСТВИЕ ❤️\n\nКоржик, Карамелька и Компот попадают на праздник и не знают, как вернуться домой. И только дети смогут им помочь…\n\nВ программе их ждут:\n⭐️ Знакомство с жителями Котополиса\n⭐️ Путешествие через кото-тоннель\n⭐️ Догонялки с папой-котиком \n⭐️ Рыбалка для маленьких друзей \n⭐️ Настоящий парк аттракционов \n⭐️ Веселая кото-карусель\n⭐️ Мяу-танцы и многое другое\n\nСтоимость:\n2 героя - 6000 рублей\n3 героя - 7500 рублей\n(Коржик, Карамелька и Компот)\n(1 час программы, тематическое музыкальное оформление, микрофоны, тематический реквизит, вынос тортика и общее фото)\nПрограмма для детей от 3 до 7 лет\n\nПосмотреть видео с программы можно в нашем актуальном: \nhttps://vk.com/narrative-213072049_87260'
+        },
+        {
+            'images': [
+                'edin1.jpg',
+                'edin2.jpg',
+                'edin3.jpg'
+            ],
+            'text': '💖 ПОТЕРЯННАЯ ПРИНЦЕССА ЕДИНОРОГОВ 💖 (VIP)\n\nВолшебная страна единорогов исчезает, потому что дети по всему миру перестают верить чудеса. Сможет ли именинница и ее друзья спасти волшебство и найти пропавшую много лет назад принцессу единорогов? А быть может, потерянная принцесса это она сама? \n\nВ программе: \n⭐ Знакомство с единорожкой Искоркой \n⭐ Путешествие по радужному мосту \n⭐ Сбор разбитого зеркала чудес \n⭐ Догонялки с единорожкой Соней \n⭐ Переправа по розовым облакам \n⭐ Танцы в долине мыльных пузырей \n⭐ Волшебное озеро желаний \n⭐️ Светящаяся шкатулка с кристаллами, зажечь которую сможет лишь именинница\n\nПрограмма для детей от 3 до 7 лет\n\nСтоимость - 6500 рублей (1 час) \n\nВ стоимость программы входит: \n📍Работа 2-х артистов в костюмах категории VIP \n📍Мощное музыкальное оборудование (колонка, микрофоны, тематическая музыка к каждой игре) \n📍Уникальная авторская программа и реквизит в тематике праздника\n📍 Торжественный вынос тортика \n📍Выезд в пределах города Арзамас'
+        }
     ],
     'birthday_5_7': [
-        {'image': 'images/birthday_5_7_1.jpg', 'text': '🔍 Квест "Потерянные сокровища" – поиск клада.'},
-        {'image': 'images/birthday_5_7_2.jpg', 'text': '🧪 Научное шоу с опытами и жидким азотом.'},
-        {'image': 'images/birthday_5_7_3.jpg', 'text': '📸 Фотозона с костюмами и моментальные фото.'}
+        {
+            'images': ['birthday_5_7_1.jpg'],
+            'text': '🔍 Квест "Потерянные сокровища" – поиск клада.'
+        },
+        {
+            'images': ['birthday_5_7_2.jpg'],
+            'text': '🧪 Научное шоу с опытами и жидким азотом.'
+        },
+        {
+            'images': ['birthday_5_7_3.jpg'],
+            'text': '📸 Фотозона с костюмами и моментальные фото.'
+        }
     ],
     'birthday_8_12': [
-        {'image': 'images/birthday_8_12_1.jpg', 'text': '🔫 Лазертаг – 1 час, инструктор, снаряжение.'},
-        {'image': 'images/birthday_8_12_2.jpg', 'text': '🥽 VR-зона – 30 минут виртуальной реальности.'},
-        {'image': 'images/birthday_8_12_3.jpg', 'text': '💃 Дискотека с ведущим и светомузыкой.'}
+        {
+            'images': ['birthday_8_12_1.jpg'],
+            'text': '🔫 Лазертаг – 1 час, инструктор, снаряжение.'
+        },
+        {
+            'images': ['birthday_8_12_2.jpg'],
+            'text': '🥽 VR-зона – 30 минут виртуальной реальности.'
+        },
+        {
+            'images': ['birthday_8_12_3.jpg'],
+            'text': '💃 Дискотека с ведущим и светомузыкой.'
+        }
     ],
     'class_1_4': [
-        {'image': 'images/class_1_4_1.jpg', 'text': '🧱 Мастер-класс "Лего-конструирование" – 1 час.'},
-        {'image': 'images/class_1_4_2.jpg', 'text': '🏛️ Интерактивная экскурсия в музей.'}
+        {
+            'images': ['class_1_4_1.jpg'],
+            'text': '🧱 Мастер-класс "Лего-конструирование" – 1 час.'
+        },
+        {
+            'images': ['class_1_4_2.jpg'],
+            'text': '🏛️ Интерактивная экскурсия в музей.'
+        }
     ],
     'class_5_9': [
-        {'image': 'images/class_5_9_1.jpg', 'text': '🧠 Интеллектуальный квиз "Что? Где? Когда?"'},
-        {'image': 'images/class_5_9_2.jpg', 'text': '👔 Профориентационный тренинг.'},
-        {'image': 'images/class_5_9_3.jpg', 'text': '🧗‍♂️ Тимбилдинг "Верёвочный курс".'}
+        {
+            'images': ['class_5_9_1.jpg'],
+            'text': '🧠 Интеллектуальный квиз "Что? Где? Когда?"'
+        },
+        {
+            'images': ['class_5_9_2.jpg'],
+            'text': '👔 Профориентационный тренинг.'
+        },
+        {
+            'images': ['class_5_9_3.jpg'],
+            'text': '🧗‍♂️ Тимбилдинг "Верёвочный курс".'
+        }
     ]
 }
 
 EXTRA_SERVICES = [
-    {'image': 'images/photo_service.jpg', 'text': '📸 Профессиональный фотограф на весь праздник (100+ фото).'},
-    {'image': 'images/video_service.jpg', 'text': '🎥 Видеосъёмка с монтажом (3-минутный ролик).'},
-    {'image': 'images/show_service.jpg', 'text': '🎭 Шоу мыльных пузырей или научное шоу (30 мин).'},
-    {'image': 'images/candy_service.jpg', 'text': '🍭 Кенди-бар с cupcakes и печеньем.'}
+    {
+        'images': ['photo_service.jpg'],
+        'text': '📸 Профессиональный фотограф на весь праздник (100+ фото).'
+    },
+    {
+        'images': ['video_service.jpg'],
+        'text': '🎥 Видеосъёмка с монтажом (3-минутный ролик).'
+    },
+    {
+        'images': ['show_service.jpg'],
+        'text': '🎭 Шоу мыльных пузырей или научное шоу (30 мин).'
+    },
+    {
+        'images': ['candy_service.jpg'],
+        'text': '🍭 Кенди-бар с cupcakes и печеньем.'
+    }
 ]
 
 # ==================================================
@@ -130,7 +200,7 @@ def get_to_main_keyboard():
     return keyboard
 
 # ==================================================
-#  ФУНКЦИИ ОТПРАВКИ (адаптированы под Callback)
+#  ФУНКЦИИ ОТПРАВКИ (с поддержкой нескольких картинок)
 # ==================================================
 def send_message(user_id, text, keyboard=None):
     try:
@@ -143,20 +213,35 @@ def send_message(user_id, text, keyboard=None):
     except Exception as e:
         print(f"Ошибка отправки сообщения: {e}")
 
-def send_image(user_id, image_path, caption, keyboard):
+def send_images(user_id, image_paths, caption, keyboard):
+    """
+    Отправляет одно сообщение с несколькими фотографиями (до 10).
+    image_paths: список путей к файлам (относительно IMAGES_DIR)
+    """
+    if not image_paths:
+        send_message(user_id, caption, keyboard)
+        return
     try:
-        photo = upload.photo_messages(image_path)[0]
-        attachment = f"photo{photo['owner_id']}_{photo['id']}"
+        attachments = []
+        for img_path in image_paths:
+            full_path = str(IMAGES_DIR / img_path)
+            photo = upload.photo_messages(full_path)[0]
+            attachment = f"photo{photo['owner_id']}_{photo['id']}"
+            attachments.append(attachment)
+            # ВКонтакте разрешает не более 10 вложений в одном сообщении
+            if len(attachments) >= 10:
+                break
+        attachment_str = ','.join(attachments)
         vk.messages.send(
             user_id=user_id,
-            attachment=attachment,
+            attachment=attachment_str,
             message=caption,
             random_id=get_random_id(),
             keyboard=keyboard.get_keyboard() if keyboard else None
         )
     except Exception as e:
-        print(f"Ошибка отправки картинки {image_path}: {e}")
-        send_message(user_id, "❌ Не удалось загрузить картинку.\n" + caption, keyboard)
+        print(f"Ошибка отправки картинок {image_paths}: {e}")
+        send_message(user_id, "❌ Не удалось загрузить картинки.\n" + caption, keyboard)
 
 def send_to_operator(text):
     try:
@@ -177,11 +262,11 @@ def show_main_services(user_id, category_key):
         send_message(user_id, 'В этой категории пока нет программ.', get_item_actions_keyboard())
         return
     for service in services:
-        send_image(user_id, service['image'], service['text'], get_item_actions_keyboard())
+        send_images(user_id, service['images'], service['text'], get_item_actions_keyboard())
 
 def show_extra_services(user_id):
     for service in EXTRA_SERVICES:
-        send_image(user_id, service['image'], service['text'], get_extra_actions_keyboard())
+        send_images(user_id, service['images'], service['text'], get_extra_actions_keyboard())
 
 # ==================================================
 #  ОСНОВНАЯ ЛОГИКА (хранилище состояний)
@@ -197,25 +282,21 @@ app = Flask(__name__)
 @app.route('/', methods=['POST'])
 def handle_webhook():
     data = request.get_json()
-    # 1. Подтверждение сервера
     if data.get('type') == 'confirmation':
         return CONFIRMATION_CODE
-    # 2. Проверка секретного ключа
     if data.get('secret') != SECRET_KEY:
         return 'ok', 200
-    # 3. Обработка нового сообщения
     if data.get('type') == 'message_new':
         process_event(data['object'])
     return 'ok', 200
 
 def process_event(event):
     user_id = event['message']['from_id']
-    if user_id < 0:  # игнорируем сообщения от сообществ
+    if user_id < 0:
         return
     raw_text = event['message']['text']
     user_message = raw_text.lower().strip()
 
-    # Инициализация стека состояний
     if user_id not in user_stack:
         user_stack[user_id] = ['main']
     current_state = user_stack[user_id][-1]
@@ -258,7 +339,7 @@ def process_event(event):
             send_message(user_id, 'Используйте кнопку "В главное меню".', get_to_main_keyboard())
         return
 
-    # --- ОБРАБОТКА КНОПКИ "НАЗАД" (без повторного показа контента) ---
+    # --- ОБРАБОТКА КНОПКИ "НАЗАД" ---
     if user_message in ['◀ назад', 'назад'] and len(user_stack[user_id]) > 1:
         user_stack[user_id].pop()
         new_state = user_stack[user_id][-1]
@@ -354,13 +435,10 @@ def process_event(event):
                 get_waiting_keyboard()
             )
     # Любое другое сообщение игнорируется
-    
+
 @app.route('/', methods=['GET'])
 def handle_health_check():
-    """Health check для Render"""
     return 'OK', 200
-# ==================================================
-#  ЗАПУСК (для локального тестирования)
-# ==================================================
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
