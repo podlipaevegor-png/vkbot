@@ -439,7 +439,7 @@ def show_program_choice(user_id, category_key, back_state):
         return
     user_temp[user_id] = {'category': category_key, 'back_state': back_state}
     keyboard = get_programs_choice_keyboard(services)
-    send_message(user_id, 'Выберите программу:', keyboard)
+    send_message(user_id, '❓ Выберите программу', keyboard)
 
 def show_program_details(user_id, service):
     send_attachments(user_id, service.get('attachments', []), service['text'], get_item_actions_keyboard())
@@ -478,21 +478,26 @@ def process_event(event):
     raw_text = event['message']['text']
     user_message = raw_text.lower().strip()
 
+    # --- НОВЫЙ ПОЛЬЗОВАТЕЛЬ? ОТПРАВЛЯЕМ ПРИВЕТСТВИЕ И ГЛАВНОЕ МЕНЮ ---
     if user_id not in user_stack:
         user_stack[user_id] = ['main']
-    current_state = user_stack[user_id][-1]
+        user_temp.pop(user_id, None)
+        send_message(user_id, '🤗 Здравствуйте! Мы очень рады, что Вы решили выбрать именно нас! \n🤖У нас есть очень удобный бот, который подскажет Вам всё, что захотите!\n🙂Но если он не сможет помочь, то всегда можно вызвать оператора', get_main_keyboard())
+        return  # Завершаем обработку, чтобы не ждать команды "привет"
+
+    # --- ДАЛЬШЕ ИДЕТ ВЕСЬ ОСТАЛЬНОЙ ВАШ КОД ---
 
     # --- ГЛОБАЛЬНЫЕ КОМАНДЫ ---
-    if user_message == 'привет':
+    if user_message in ['привет', 'начать', 'старт', 'меню', 'start', 'бот']:
         user_stack[user_id] = ['main']
         user_temp.pop(user_id, None)
-        send_message(user_id, 'Добро пожаловать!', get_main_keyboard())
+        send_message(user_id, '😊 Добро пожаловать!', get_main_keyboard())
         return
 
     if user_message in ['📞 связь с оператором', 'связь с оператором']:
         user_link = f"https://vk.com/id{user_id}"
         send_to_operator(f"Пользователь {user_link} хочет связаться с оператором.")
-        send_message(user_id, "Оператор скоро свяжется с вами.", get_main_keyboard())
+        send_message(user_id, "📞 Оператор совсем скоро свяжется с вами!", get_main_keyboard())
         user_stack[user_id] = ['main']
         user_temp.pop(user_id, None)
         return
@@ -500,7 +505,7 @@ def process_event(event):
     if user_message in ['❓ у меня индивидуальный запрос', 'у меня индивидуальный запрос']:
         user_link = f"https://vk.com/id{user_id}"
         send_to_operator(f"ИНДИВИДУАЛЬНЫЙ ЗАПРОС от {user_link}.")
-        send_message(user_id, "Ваш запрос передан администратору.", get_main_keyboard())
+        send_message(user_id, "📞 Отлично! Ваш запрос уже передан администратору, осталось подождать совсем чуть-чуть!", get_main_keyboard())
         user_stack[user_id] = ['main']
         user_temp.pop(user_id, None)
         return
@@ -510,9 +515,9 @@ def process_event(event):
         if user_message in ['◀ отмена', 'отмена']:
             user_stack[user_id].pop()
             user_temp.pop(user_id, None)
-            send_message(user_id, 'Заказ отменён.', get_main_keyboard())
+            send_message(user_id, '☹ Заказ отменён', get_main_keyboard())
             return
-        send_message(user_id, "Отлично! Вызываю оператора.", get_to_main_keyboard())
+        send_message(user_id, "📞 Отлично! Вызываю оператора, нужно совсем немного подождать!", get_to_main_keyboard())
         user_link = f"https://vk.com/id{user_id}"
         send_to_operator(f"НОВЫЙ ЗАКАЗ от {user_link}\nСообщение: {raw_text}")
         user_stack[user_id].append('order_completed')
@@ -522,9 +527,9 @@ def process_event(event):
     if current_state == 'order_completed':
         if user_message in ['🏠 в главное меню', 'в главное меню']:
             user_stack[user_id] = ['main']
-            send_message(user_id, 'Главное меню', get_main_keyboard())
+            send_message(user_id, '🔥 Главное меню', get_main_keyboard())
         else:
-            send_message(user_id, 'Используйте кнопку "В главное меню".', get_to_main_keyboard())
+            send_message(user_id, '👀 Используйте кнопку "В главное меню".', get_to_main_keyboard())
         return
 
     # --- КНОПКА "НАЗАД" ---
@@ -532,18 +537,18 @@ def process_event(event):
         user_stack[user_id].pop()
         new_state = user_stack[user_id][-1]
         if new_state == 'main':
-            send_message(user_id, 'Главное меню:', get_main_keyboard())
+            send_message(user_id, '🔥 Главное меню', get_main_keyboard())
         elif new_state == 'programs':
-            send_message(user_id, 'Какая программа вам нужна?', get_programs_keyboard())
+            send_message(user_id, '❓ Какая программа вам нужна?', get_programs_keyboard())
         elif new_state == 'birthdays':
-            send_message(user_id, 'Выберите возраст:', get_birthdays_keyboard())
+            send_message(user_id, '✅ Выберите возраст', get_birthdays_keyboard())
         elif new_state == 'choosing_program':
             cat = user_temp.get(user_id, {}).get('category')
             back = user_temp.get(user_id, {}).get('back_state')
             if cat and back:
                 show_program_choice(user_id, cat, back)
             else:
-                send_message(user_id, 'Главное меню:', get_main_keyboard())
+                send_message(user_id, '🔥 Главное меню', get_main_keyboard())
         elif new_state == 'viewing_program':
             cat = user_temp.get(user_id, {}).get('category')
             back = user_temp.get(user_id, {}).get('back_state')
@@ -551,22 +556,22 @@ def process_event(event):
                 show_program_choice(user_id, cat, back)
             else:
                 user_stack[user_id].append('main')
-                send_message(user_id, 'Главное меню:', get_main_keyboard())
+                send_message(user_id, '🔥 Главное меню', get_main_keyboard())
         elif new_state == 'extra_categories':
-            send_message(user_id, 'Выберите категорию доп. услуг:', get_extra_categories_keyboard())
+            send_message(user_id, '❓ Выберите категорию доп. услуг', get_extra_categories_keyboard())
         elif new_state == 'viewing_extra':
-            send_message(user_id, 'Выберите категорию доп. услуг:', get_extra_categories_keyboard())
+            send_message(user_id, '❓ Выберите категорию доп. услуг', get_extra_categories_keyboard())
         return
 
     if user_message in ['◀ назад', 'назад'] and len(user_stack[user_id]) == 1:
-        send_message(user_id, 'Вы уже в главном меню.', get_main_keyboard())
+        send_message(user_id, '🔥 Вжух! И вы уже в главном меню!', get_main_keyboard())
         return
 
     # --- НАВИГАЦИЯ ---
     if current_state == 'main':
         if user_message in ['📚 программы', 'программы']:
             user_stack[user_id].append('programs')
-            send_message(user_id, 'Давайте выберем категорию', get_programs_keyboard())
+            send_message(user_id, '🤗 Давайте выберем категорию', get_programs_keyboard())
 
     elif current_state == 'programs':
         if user_message in ['🎂 дни рождения', 'дни рождения']:
@@ -577,7 +582,7 @@ def process_event(event):
             show_program_choice(user_id, 'class_all', 'programs')
         elif user_message in ['🛠 доп. услуги', 'доп. услуги']:
             user_stack[user_id].append('extra_categories')
-            send_message(user_id, 'Выберите категорию:', get_extra_categories_keyboard())
+            send_message(user_id, '🤗 Давайте выберем категорию', get_extra_categories_keyboard())
 
     elif current_state == 'birthdays':
         if user_message == '👶 1-4 года':
@@ -607,17 +612,17 @@ def process_event(event):
             user_stack[user_id].append('viewing_program')
             show_program_details(user_id, selected_service)
         else:
-            send_message(user_id, 'Пожалуйста, выберите программу из списка.', get_programs_choice_keyboard(services))
+            send_message(user_id, '🤗 Пожалуйста, выберите программу из списка', get_programs_choice_keyboard(services))
 
     elif current_state == 'viewing_program':
         if user_message in ['✅ хочу заказать', 'хочу заказать']:
             user_temp[user_id]['prev_state'] = current_state
             user_stack[user_id].append('waiting_order_text')
-            send_message(user_id, 'Осталось совсем чуть-чуть! Заполните анкету:\n\n1) Дата праздника?\n2) Имя и возраст именинника?\n3) Количество гостей?\n4) Ваш телефон?\n\n', get_waiting_keyboard())
+            send_message(user_id, '🔥 Осталось совсем чуть-чуть! Заполните небольшую анкету и пришлите её прямо сюда 📌 \n\n1) На какие даты рассчитываете проведение праздника? 📅 \n2) Для кого планируется праздник? (Имя, возраст) 🎆 \n3) Сколько гостей и какого возраста планируется на празднике? 👫\n4) Нужно ли в конце программы делать торжественный вынос тортика? 🎂 \n5) Место проведения праздника, адрес? 🙂 \n6) Ваш контактный номер телефона? 📞 \n7) Есть ли какие-либо дополнительные комментарии ? 📝', get_waiting_keyboard())
         elif user_message in ['🛠 доп. услуги', 'доп. услуги']:
             user_temp[user_id]['prev_state'] = current_state
             user_stack[user_id].append('extra_categories')
-            send_message(user_id, 'Выберите категорию доп. услуг:', get_extra_categories_keyboard())
+            send_message(user_id, '🤗 Выберите категорию доп. услуг', get_extra_categories_keyboard())
 
     elif current_state == 'extra_categories':
         if user_message in ['🎨 мастер-классы', 'мастер-классы']:
@@ -631,7 +636,7 @@ def process_event(event):
             show_extra_services(user_id, 'more')
         elif user_message == '◀ назад':
             user_stack[user_id].pop()
-            send_message(user_id, 'Какая программа вам нужна?', get_programs_keyboard())
+            send_message(user_id, '❓ Какая программа вам нужна?', get_programs_keyboard())
         else:
             send_message(user_id, 'Пожалуйста, выберите категорию:', get_extra_categories_keyboard())
 
@@ -639,7 +644,8 @@ def process_event(event):
         if user_message in ['✅ хочу заказать', 'хочу заказать']:
             user_temp[user_id]['prev_state'] = current_state
             user_stack[user_id].append('waiting_order_text')
-            send_message(user_id, 'Заполните анкету для доп. услуги:\n1) Какая услуга?\n2) Дата?\n3) Ваш телефон?\n\n', get_waiting_keyboard())
+            send_message(user_id, '🔥 Осталось совсем чуть-чуть! Заполните небольшую анкету и пришлите её прямо сюда 📌 \n\n1) На какие даты рассчитываете проведение праздника? 📅 \n2) Для кого планируется праздник? (Имя, возраст) 🎆 \n3) Сколько гостей и какого возраста планируется на празднике? 👫\n4) Нужно ли в конце программы делать торжественный вынос тортика? 🎂 \n5) Место проведения праздника, адрес? 🙂 \n6) Ваш контактный номер телефона? 📞 \n7) Есть ли какие-либо дополнительные комментарии ? 📝',
+            get_waiting_keyboard())
 
 @app.route('/', methods=['GET'])
 def handle_health_check():
