@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent
 IMAGES_DIR = BASE_DIR / 'images'
 
 # ==================================================
-#  ДАННЫЕ УСЛУГ (со всеми программами)
+#  ДАННЫЕ ОСНОВНЫХ ПРОГРАММ (полностью из вашего кода)
 # ==================================================
 MAIN_SERVICES = {
     'birthday_1_4': [
@@ -137,7 +137,6 @@ MAIN_SERVICES = {
             'text': '\n 🤗Если вы не нашли подходящую программу, то мы предлагаем вам связаться с оператором, он обязательно сможет помочь вам подобрать именно то, что нужно Вам!🔥 '
         }
     ],
-    # Объединённые программы для классов (все вместе)
     'class_all': [
         {
             'images': ['quiz1.jpg'],
@@ -153,12 +152,41 @@ MAIN_SERVICES = {
     ]
 }
 
-EXTRA_SERVICES = [
-    {'images': ['photo_service.jpg'], 'text': '📸 Профессиональный фотограф на весь праздник (100+ фото).'},
-    {'images': ['video_service.jpg'], 'text': '🎥 Видеосъёмка с монтажом (3-минутный ролик).'},
-    {'images': ['show_service.jpg'], 'text': '🎭 Шоу мыльных пузырей или научное шоу (30 мин).'},
-    {'images': ['candy_service.jpg'], 'text': '🍭 Кенди-бар с cupcakes и печеньем.'}
-]
+# ==================================================
+#  ДАННЫЕ ДОПОЛНИТЕЛЬНЫХ УСЛУГ (с разделами)
+# ==================================================
+EXTRA_SERVICES = {
+    'master_classes': [
+        {
+            'images': ['master1.jpg'],
+            'text': '🎨 Мастер-класс по рисованию – создадим яркую картину за 1 час.\nСтоимость: 1500₽ с человека.'
+        },
+        {
+            'images': ['master2.jpg'],
+            'text': '🧪 Научное шоу с опытами – химия, физика, взрывы.\nСтоимость: 2000₽ с человека.'
+        }
+    ],
+    'disco': [
+        {
+            'images': ['disco1.jpg'],
+            'text': '💃 Детская дискотека с ведущим, светомузыкой и конкурсами.\nСтоимость: 5000₽ за час (группа до 15 детей).'
+        },
+        {
+            'images': ['disco2.jpg'],
+            'text': '🕺 Вечеринка в стиле 90-х – караоке, ретро-танцы, флешмобы.\nСтоимость: 6000₽ за час.'
+        }
+    ],
+    'more': [
+        {
+            'images': ['more1.jpg'],
+            'text': '🎈 Аквагрим для всех гостей – яркие рисунки, блёстки.\nСтоимость: 200₽ с человека.'
+        },
+        {
+            'images': ['more2.jpg'],
+            'text': '📷 Фотограф на 2 часа с моментальной печатью фото.\nСтоимость: 4000₽.'
+        }
+    ]
+}
 
 # ==================================================
 #  ИНИЦИАЛИЗАЦИЯ VK API (версия 5.199)
@@ -213,50 +241,58 @@ def get_main_keyboard():
     return keyboard
 
 def get_programs_keyboard():
-    """Меню выбора категорий (без кнопки связи с оператором)"""
     keyboard = VkKeyboard(one_time=True)
     keyboard.add_button('🎂 Дни рождения', color=VkKeyboardColor.PRIMARY)
     keyboard.add_button('🏫 Для классов', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
     keyboard.add_button('🛠 Доп. услуги', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
 def get_birthdays_keyboard():
-    """Выбор возраста (без кнопки связи с оператором)"""
     keyboard = VkKeyboard(one_time=True)
     keyboard.add_button('👶 1-4 года', color=VkKeyboardColor.PRIMARY)
     keyboard.add_button('🧒 5-7 лет', color=VkKeyboardColor.PRIMARY)
     keyboard.add_button('👦 8-12 лет', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
 def get_item_actions_keyboard():
-    """Клавиатура для сообщений с программой (связь с оператором в самом низу)"""
+    """Клавиатура для сообщений с программой (с кнопкой Доп. услуги)"""
     keyboard = VkKeyboard(one_time=True)
     keyboard.add_button('✅ Хочу заказать', color=VkKeyboardColor.POSITIVE)
     keyboard.add_button('🛠 Доп. услуги', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
     keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
+    return keyboard
+
+def get_extra_categories_keyboard():
+    keyboard = VkKeyboard(one_time=True)
+    keyboard.add_button('🎨 Мастер-классы', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_button('💃 Дискотека', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_line()
+    keyboard.add_button('➕ Ещё', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_line()
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
 def get_extra_actions_keyboard():
-    """Клавиатура для доп. услуг (связь с оператором в самом низу)"""
+    """Клавиатура для доп. услуг (без кнопки Доп. услуги)"""
     keyboard = VkKeyboard(one_time=True)
     keyboard.add_button('✅ Хочу заказать', color=VkKeyboardColor.POSITIVE)
     keyboard.add_line()
     keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
 def get_waiting_keyboard():
     keyboard = VkKeyboard(one_time=True)
-    keyboard.add_button('◀ Отмена', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_button('◀ Отмена', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
 def get_to_main_keyboard():
@@ -302,7 +338,7 @@ def send_to_operator(text):
         logging.error(f"Ошибка отправки оператору: {e}")
 
 # ==================================================
-#  ФУНКЦИИ ПОКАЗА УСЛУГ (используют готовые attachments)
+#  ФУНКЦИИ ПОКАЗА УСЛУГ
 # ==================================================
 def show_main_services(user_id, category_key):
     services = MAIN_SERVICES.get(category_key, [])
@@ -312,8 +348,12 @@ def show_main_services(user_id, category_key):
     for service in services:
         send_attachments(user_id, service.get('attachments', []), service['text'], get_item_actions_keyboard())
 
-def show_extra_services(user_id):
-    for service in EXTRA_SERVICES:
+def show_extra_services(user_id, category_key):
+    services = EXTRA_SERVICES.get(category_key, [])
+    if not services:
+        send_message(user_id, 'В этой категории пока нет услуг.', get_extra_actions_keyboard())
+        return
+    for service in services:
         send_attachments(user_id, service.get('attachments', []), service['text'], get_extra_actions_keyboard())
 
 # ==================================================
@@ -396,8 +436,10 @@ def process_event(event):
             send_message(user_id, 'Теперь давайте выберем возраст 🔥', get_birthdays_keyboard())
         elif new_state == 'viewing_main':
             send_message(user_id, 'Выберите действие', get_item_actions_keyboard())
+        elif new_state == 'extra_categories':
+            send_message(user_id, 'Выберите категорию дополнительных услуг:', get_extra_categories_keyboard())
         elif new_state == 'viewing_extra':
-            send_message(user_id, 'Выберите действие', get_extra_actions_keyboard())
+            send_message(user_id, 'Выберите категорию дополнительных услуг:', get_extra_categories_keyboard())
         return
 
     if user_message in ['◀ назад', 'назад'] and len(user_stack[user_id]) == 1:
@@ -414,13 +456,12 @@ def process_event(event):
             user_stack[user_id].append('birthdays')
             send_message(user_id, 'Теперь давайте выберем возраст 🔥', get_birthdays_keyboard())
         elif user_message in ['🏫 для классов', 'для классов']:
-            # Объединённая категория классов без промежуточного выбора
             user_stack[user_id].append('viewing_main')
             user_temp[user_id] = {'category': 'class_all'}
             show_main_services(user_id, 'class_all')
         elif user_message in ['🛠 доп. услуги', 'доп. услуги']:
-            user_stack[user_id].append('viewing_extra')
-            show_extra_services(user_id)
+            user_stack[user_id].append('extra_categories')
+            send_message(user_id, 'Выберите категорию дополнительных услуг:', get_extra_categories_keyboard())
     elif current_state == 'birthdays':
         if user_message == '👶 1-4 года':
             user_stack[user_id].append('viewing_main')
@@ -434,6 +475,24 @@ def process_event(event):
             user_stack[user_id].append('viewing_main')
             user_temp[user_id] = {'category': 'birthday_8_12'}
             show_main_services(user_id, 'birthday_8_12')
+    elif current_state == 'extra_categories':
+        if user_message in ['🎨 мастер-классы', 'мастер-классы']:
+            user_stack[user_id].append('viewing_extra')
+            user_temp[user_id] = {'category': 'master_classes'}
+            show_extra_services(user_id, 'master_classes')
+        elif user_message in ['💃 дискотека', 'дискотека']:
+            user_stack[user_id].append('viewing_extra')
+            user_temp[user_id] = {'category': 'disco'}
+            show_extra_services(user_id, 'disco')
+        elif user_message in ['➕ ещё', 'ещё']:
+            user_stack[user_id].append('viewing_extra')
+            user_temp[user_id] = {'category': 'more'}
+            show_extra_services(user_id, 'more')
+        elif user_message == '◀ назад':
+            user_stack[user_id].pop()
+            send_message(user_id, 'Какая программа вам нужна? ⚡', get_programs_keyboard())
+        else:
+            send_message(user_id, 'Пожалуйста, выберите категорию из кнопок:', get_extra_categories_keyboard())
     elif current_state == 'viewing_main':
         if user_message in ['✅ хочу заказать', 'хочу заказать']:
             user_temp[user_id]['prev_state'] = current_state
@@ -452,9 +511,8 @@ def process_event(event):
             )
         elif user_message in ['🛠 доп. услуги', 'доп. услуги']:
             user_temp[user_id]['prev_state'] = current_state
-            user_stack[user_id].append('viewing_extra')
-            show_extra_services(user_id)
-        # Кнопка "Связь с оператором" уже обрабатывается глобально в начале
+            user_stack[user_id].append('extra_categories')
+            send_message(user_id, 'Выберите категорию дополнительных услуг:', get_extra_categories_keyboard())
     elif current_state == 'viewing_extra':
         if user_message in ['✅ хочу заказать', 'хочу заказать']:
             user_temp[user_id]['prev_state'] = current_state
@@ -471,6 +529,7 @@ def process_event(event):
                 '7) Есть ли какие-либо дополнительные комментарии ? 📝\n\n',
                 get_waiting_keyboard()
             )
+    # Любое другое сообщение игнорируется
 
 @app.route('/', methods=['GET'])
 def handle_health_check():
