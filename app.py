@@ -373,20 +373,19 @@ def get_to_main_keyboard():
     return keyboard
 
 def get_programs_choice_keyboard(services):
-    """Динамическая клавиатура из названий программ"""
+    """Динамическая клавиатура из названий программ (не более 3 кнопок в строке)"""
     keyboard = VkKeyboard(one_time=True)
     for i, service in enumerate(services):
         title = service.get('title')
         if not title:
-            # Берём первые 30 символов из текста
             text = service.get('text', '')
             if text:
                 title = text[:30] + '…'
             else:
                 title = "Без названия"
         keyboard.add_button(title, color=VkKeyboardColor.PRIMARY)
-        # каждые 3 кнопки — новая строка
-        if (i + 1) % 3 == 0:
+        # Если это не последняя кнопка и уже добавлено 3 кнопки, переносим строку
+        if (i + 1) % 3 == 0 and i != len(services) - 1:
             keyboard.add_line()
     keyboard.add_line()
     keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
