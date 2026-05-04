@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent
 IMAGES_DIR = BASE_DIR / 'images'
 
 # ==================================================
-#  ДАННЫЕ ОСНОВНЫХ ПРОГРАММ (добавлены поля title)
+#  ДАННЫЕ ОСНОВНЫХ ПРОГРАММ (сокращённо для примера, вы свои вставьте)
 # ==================================================
 MAIN_SERVICES = {
     'birthday_1_4': [
@@ -67,7 +67,7 @@ MAIN_SERVICES = {
             'images': ['ledib1.jpg'],
             'title': '🔥 Леди Баг и Суперкот',
             'text': '🔥 ЛЕДИ БАГ И СУПЕРКОТ 🔥\n\nЛеди Баг и Суперкот всегда готовы защитить мир от злодея, но в этот раз… Что — то пошло не так. Силы главного злодея - Бражника увеличились в несколько раз. Только объединившись вместе с ребятами они смогут спасти мир. А после им предстоит устроить мега – крутую вечеринку в честь победы над злым Бражником.\n\nВ программе вас ждет:\n⭐ Измерение силы и ловкости по специальной шкале супергероев;\n⭐ Тренировка на меткость\n⭐ Знакомство со всеми супергероями Парижа и их Квами;\n⭐ Испытание на скорость для самых бесстрашных;\n⭐ Охота на черных бабочек-акум\n⭐ Сражение с бражником\n⭐ Волшебный портал желаний\nСтоимость: 6000 рублей\n(1 час, 2 героя, тематическое муз. сопровождение и мощный звук, микрофоны, танцы и игры в тематике праздника, торжественный вынос тортика и фото с героями)'
-},
+        },
         {
             'images': ['cirk1.jpg'],
             'title': '🎪 Волшебный цирк (VIP)',
@@ -117,7 +117,7 @@ MAIN_SERVICES = {
         {
             'images': ['barb1.jpg'],
             'title': '💖 Барби',
-             'text': '💖 ВЕЧЕРИНКА В СТИЛЕ БАРБИ 💖\n\nДля тех, кто любит яркие вечеринки, гламур и розовый цвет. Приключения с стильными куколками Барби для настоящих маленьких модниц. \n\nВас ждёт:\n⭐️ Гламурный показ мод (модные аксессуары для каждого гостя)\n⭐️ Гигантский поп-корн для друзей \n⭐️ Уроки стиля от Барби и Кена\n⭐️ Розовый пушистый ящик «кажется нащупал»\n⭐️ Эстафета на розовых скейтах\n⭐️ Догонялки с гигантским розовым фламинго\n⭐️ Огромные помады\n⭐️ Танцы с куколками Барби \nИ многое другое….\n\nПрограмма для детей от 3 до 7 лет\n\nСтоимость - 6000 рублей\n(1 час программы, 2 героя, музыкальное оформление, тематический реквизит, вынос тортика и общее фото)'
+            'text': '💖 ВЕЧЕРИНКА В СТИЛЕ БАРБИ 💖\n\nДля тех, кто любит яркие вечеринки, гламур и розовый цвет. Приключения с стильными куколками Барби для настоящих маленьких модниц. \n\nВас ждёт:\n⭐️ Гламурный показ мод (модные аксессуары для каждого гостя)\n⭐️ Гигантский поп-корн для друзей \n⭐️ Уроки стиля от Барби и Кена\n⭐️ Розовый пушистый ящик «кажется нащупал»\n⭐️ Эстафета на розовых скейтах\n⭐️ Догонялки с гигантским розовым фламинго\n⭐️ Огромные помады\n⭐️ Танцы с куколками Барби \nИ многое другое….\n\nПрограмма для детей от 3 до 7 лет\n\nСтоимость - 6000 рублей\n(1 час программы, 2 героя, музыкальное оформление, тематический реквизит, вынос тортика и общее фото)'
         },
         {
             'images': ['lab1.jpg'],
@@ -189,27 +189,87 @@ EXTRA_SERVICES = {
     'master_classes': [
         {
             'images': ['slime.jpg'],
-            'text': '✅ МАСТЕР-КЛАСС ПО СЛАЙМАМ ✅ ...'
+            'text': '✅ МАСТЕР-КЛАСС ПО СЛАЙМАМ ✅ \n\nВ ходе мастер-класса дети изготовят свой уникальный слайм - цветной и с запахом, с блестками, шариками, бусинами и другими наполнителями. Все расходные материалы включены в стоимость. \n\nПродолжительность мастер-класса - 30/40 минут\nСтоимость: 3500 рублей (оплата 2-х ведущих) + 250 рублей за ребенка'
         },
-        # ... (остальные без изменений)
+        {
+            'images': ['bracl.jpg'],
+            'text': '✅ МАСТЕР-КЛАСС БРАСЛЕТЫ ИЗ БУСИН✅ \n\nВ ходе мастер-класса дети изготовят индивидуальный или именной браслет - огромный выбор цветов, форм и шармиков-фигурок. Все расходные материалы включены в стоимость. \n\nПродолжительность мастер-класса - 30/40 минут\nСтоимость: 3500 рублей (оплата ведущих) + 200 рублей за ребенка'
+        },
+        {
+            'images': ['mor.jpg'],
+            'text': '✅Мастер-класс по изготовлению крио-мороженого✅\nСтоимость 4500 р(до 10 чел, свыше +200 р за ребенка)'
+        },
+        {
+            'images': ['derevo.jpg'],
+            'text': '✅Мастер-класс по росписи деревянных фигурок✅\n3500 р работа ведущих+\n150 р за роспись одной фигурки'
+        },
+        {
+            'text': '\n 🤗Если вы не нашли подходящую программу, то мы предлагаем вам посмотреть в других категориях или связаться с оператором, он обязательно сможет помочь вам подобрать именно то, что нужно Вам!🔥 '
+        }
     ],
     'disco': [
-        # ...
+        {
+            'images': ['ser.jpg'],
+            'text': '🔥СЕРЕБРЯНАЯ ДИСКОТЕКА🔥\n\nЭто 30 минут шоу, когда дети и взрослые кидаются серебряной бумагой и танцуют. Проводят серебряное шоу и зажигают толпу — ведущие праздника. Шоу начинается с небольшого количества бумаги и к кульминации – вся бумага на танцполе, а гости перекидываются ей, как снежками. Ведущие подогревают гостей и проводят конкурсы с бумагой.\nС профессиональным цветным светом это шоу заиграет миллионами ярких красок!\n\n⭐ Длительность:\n25-30 минут активного бросания и танцев (+ 30 минут сборы)\n\n⭐ Стоимость:\n(без светового оформления) : 5000 рублей\n(с проф. светом 2 напольные лампы): 6000 руб\n( с проф. светом -стойка 4 лампы)- 7000 р'
+        },
+        {
+            'images': ['neod.jpg'],
+            'text': '🔥НЕОНОВАЯ ДИСКОТЕКА🔥\n\nЭто 30 минут шоу, когда дети и взрослые кидаются неоновой, светящейся пленкой и танцуют. Проводят шоу — ведущие праздника. Шоу проходит в темноте, с использованием профессиональных ультрафиолетовых ламп, в свете которых светится не только ленты, но и яркие элементы одежды детей\nНеобычное и эффектное шоу для финала вашего праздника!\n\n⭐ Длительность:\n25-30 минут активного бросания и танцев (+ 30 минут сборы)\n\n⭐ Стоимость:\n(с проф. световым оборудованием): 6000 рублей\n\n❗️Важные моменты:\n- После шоу всю бумагу мы забираем с собой, оставляя помещение в полном порядке.\n- От вас требуется только темнота в помещении.'
+        },
+        {
+            'images': ['spec.jpg'],
+            'text': '🔥 ДИСКОТЕКА СПЕЦ. ЭФФЕКТОВ 🔥\n\nСамое яркое и необычное шоу на вашем празднике! Это микс самых ярких вау-эффектов на вашем празднике. Только представьте:\n\n💣 Генератор мыльных пузырей\n💣 Генератор снега\n💣 Профессиональное световое оборудование\n💣 Дым-машина\n💣 Лазерные очки и перчатки для именинницы/ка\n\nА также море эмоций, драйв и потрясающие фото. Уникальное шоу только от нашей команды) Гости точно скажут "Вау", гарантируем!\n\n⭐ Продолжительность: 20-25 минут\n⭐ Стоимость: 6500 рублей\n\nhttps://vk.com/clip-213072049_456239435?c=1'
+        },
+        {
+            'images': ['bum.jpg'],
+            'text': '🔥БУМАЖНАЯ ДИСКОТЕКА🔥\n\nЭто шоу, когда дети и взрослые кидаются лентами из цветной пленки и танцуют. Проводят серебряное шоу и зажигают толпу — ведущие праздника. Шоу начинается с небольшого количества бумаги и к кульминации – вся бумага на танцполе, а гости перекидываются ей, как снежками. С профессиональным цветным светом это шоу заиграет миллионами ярких красок!\n\nВозможные цвета:\n▫️ Розовый + белый \n(идеальное дополнение к программе барби, единорожки, сладкая сказка, спа-вечеринка и т.д.)\n▫️Черный + белый\n(идеальное дополнение к программе Уэнсдей и подростковым стильным вечеринкам)\n\n⭐ Длительность:\n25-30 минут активного бросания и танцев (+ 30 минут сборы)\n\n⭐ Стоимость:\n(без светового оформления) : 5000 рублей\n(с проф. световым оборудованием - 2 напольные лампы) - 6000 рублей\n( с проф свет оборудованием - стойка 4 лампы) -7000 р'
+        },
+        {
+            'images': ['sneg.jpg'],
+            'text': '🤍 СНЕЖНАЯ ДИСКОТЕКА🤍\n\nПроходит с использованием специального генератора снега.\nБелые, быстро исчезающие хлопья снега, состоящие из гипоаллергенной пенки подарят детям настоящий восторг.\nЭто не мыльная масленая пена, а специальный раствор, который очень долго не тает и легко вытирается с пола.\nПенка не оставляет следов на одежде, для защиты пола мы привозим защитное ковровое покрытие\nСнежная дискотека подойдет даже для подростков. Уникальное шоу только от команды "Шоуленд"\n\nДлительность - 20 минут\nСтоимость:\n5000 рублей (без светового оборудования)\n6000 рублей (с проф. светом 2 напольные лампы)\n7000 р( стойка 4 лампы)'
+        },
+        {
+            'images': ['puzir.jpg'],
+            'text': '🤍 ДИСКОТЕКА МЫЛЬНЫХ ПУЗЫРЕЙ 🤍\n\nОтлично подходит для малышей, ведь они просто обожают мыльные пузыри. Два генератора создают более 1000 пузырей в минуту, дети очень любят танцевать под ними и лопать\nВместе с любимыми героями это превращается в настоящее волшебное приключение, которое точно оставит приятные воспоминания....\n\n⭐ Длительность: 20 минут\n⭐ Стоимость: 3500 рублей'
+        },
+        {
+            'text': '\n 🤗Если вы не нашли подходящую программу, то мы предлагаем вам посмотреть в других категориях или связаться с оператором, он обязательно сможет помочь вам подобрать именно то, что нужно Вам!🔥 '
+        }
     ],
     'more': [
-        # ...
+        {
+            'images': ['beaut.jpg'],
+            'text': '💟 БЬЮТИ - БАР 💟\nМобильная студия красоты:\n- огромный выбор ярких цветов теней\n- блестки для лица\n- цветные подводки, светящиеся в УФ\n- блески и тинты\n- и многое другое✨\n(Продолжительность: ~1 / 1,5 часа;\n\nСтоимость \n\n▫️Только макияж (до 10 детей) - 4500 ₽\n▫️Макияж + блеск-тату для именинницы и мальчиков - 5000 ₽\n(свыше 10 детей- доплата по 150 рублей с ребенка)\n\nПрикрепляем вам ссылку на клип\nvk.com/clip-213072049_456239575?c=1'
+        },
+        {
+            'images': ['vata.jpg'],
+            'text': '💖 Сладкая вата 💖\nЛюбимое сладкое угощение для каждого. Разные вкусы и цвета. У каждого ребенка появится возможность попробовать сладкие облака на вкус. По 1 порции на ребенка\nСтоимость:\nДо 10 детей - 4000 рублей\nДо 15 детей - 4500 рублей\nДо 20 детей - 5500 рублей\nДо 30 детей - 6500 рублей'
+        },
+        {
+            'images': ['tatu.jpg'],
+            'text': '🔥 ТАТУ-БАР 🔥\n\nВыездная станция с блеск-тату (шаблоны дети выбирают самостоятельно). Татуировка выполняется с использованием специального гипоаллергенного клея и блесток. Тату держатся от 1 до 2 недель. Каждый ребенок унесет с праздника яркое напоминание о дне рождения друга.\nИдеально для welcome-зоны.\n\nСтоимость:\n▫️ Только блеск-тату - 150 рублей с ребенка\n▫️ Блеск-тату с бьюти-станцией (на фото) - 3000 рублей (до 10 детей)'
+        },
+        {
+            'images': ['pena.jpg'],
+            'text': '💭 ПЕННАЯ ВЕЧЕРИНКА 💭 \n\n⭐Большая пенная пушка на стойке (выброс пены до 7 метров) \n⭐ 250 литров пенного раствора \n⭐ 25-30 минут активных танцев под хлопьями пены \n(Необходим доступ к теплой (желательно) воде и электричеству (на расстоянии не более 50 м. от точки подключения)) \n\nСтоимость: \nБелая пена - 10000 рублей \nЦветная - 12000 рублей (розовый, голубой, зеленый и желтый цвета)'
+        },
+        {
+            'images': ['summer.jpg'],
+            'text': '☀️ «Summer-пати» ☀️\n\nНастоящий хит для жаркого лета! Только самые сочные летние игры, самые мокрые челленджи и самые яркие краски ⛱️\nДля незабываемой летней вечеринки мы предлагаем:\n\nАНИМАЦИОННАЯ ПРОГРАММА:\n(Возраст 3+, продолжительность- 1 час)\nВместе с двумя яркими ведущими дети зарядятся самым летним настроением, ведь их ждет 👇🏻\n\n🥝 Летний флешмоб\n🥝 Тропическое лимбо \n🥝 Гигантские фрукты и пальмовые листья\n🥝 Битва тропическими фруктами\n🥝 Рецепт идеального летнего коктейля\n🥝 Эстафета с надувными розовыми фламинго\n🥝 Гигантские летающие арбузы\nИ многое другое…\n\nЯркие краски, только тематический реквизит и самый зажигательный летний плейлист\nСтоимость: 6500 рублей\n\n💦МОКРЫЕ ЧЕЛЛЕНДЖИ💦\n(Возраст от 5-6 лет)\nБолее «мокрый» вариант летней вечеринки. Два ярких ведущих и самые водные челленджи 👇🏻\n\n🍉 Челлендж: «Мокрая рулетка»\n🍉 Челлендж: «Водное кольцо»\n🍉 Водная битва с акулой «Тралалело-Тралала»\n🍉 Гонки в ластах\n🍉 Битва на гигантских бабуках \n🍉 Эстафеты с водными пистолетами\n🍉 Самые летние танцы\n\nМоре брызг воды, смеха, веселья☀️\nИдеальное решение для тех, кто не боится намокнуть!\nПродолжительность: 1 час\nСтоимость: 6500 рублей\n\n☀️ВОТЕРБОЛ - БИТВА НА ВОДНЫХ БЛАСТЕРАХ☀️\n\nМожет быть как дополнением к основной программе, так и самостоятельным развлечением 👇🏻\nДвадцать электро-бластеров с дальностью выстрела водой до 3 метров для самого захватывающего сражения! \n💧 Цветные манишки и банданы для каждой команды \n💧 2 спортивных ведущих\n💧 Мощные электро-бластеры\n💧 Зажигательный летний плейлист\n\nПродолжительность: 20-30 мин\nСтоимость: 6000 рублей\n\nА также можно дополнить праздник: \n\n☀️ ПЕННОЙ ВЕЧЕРИНКОЙ с надувными фигурами (от 9000 ₽)\n☀️ ШОУ НАДУВНЫХ ПОДУШЕК (от 5000 ₽)\n☀️ ТЕМАТИЧЕСКОЙ ФОТОЗОНОЙ (от 5000 ₽)\n☀️ МАСТЕР-КЛАССОМ по изготовлению коктейлей бабл-ти (от 4500₽)\n☀️ МАСТЕР-КЛАССОМ по изготовлению крио-мороженного (от 4500 ₽)'
+        }
     ]
+
 }
 
 # ==================================================
-#  ИНИЦИАЛИЗАЦИЯ VK API (версия 5.199)
+#  ИНИЦИАЛИЗАЦИЯ VK API
 # ==================================================
 vk_session = vk_api.VkApi(token=GROUP_TOKEN, api_version='5.199')
 vk = vk_session.get_api()
 upload = VkUpload(vk_session)
 
 # ==================================================
-#  ПРЕДЗАГРУЗКА ВСЕХ КАРТИНОК ПРИ СТАРТЕ
+#  ПРЕДЗАГРУЗКА КАРТИНОК
 # ==================================================
 def preload_attachments(data):
     if isinstance(data, dict):
@@ -259,7 +319,7 @@ def get_programs_keyboard():
     keyboard.add_line()
     keyboard.add_button('🛠 Доп. услуги', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
 def get_birthdays_keyboard():
@@ -270,18 +330,17 @@ def get_birthdays_keyboard():
     keyboard.add_line()
     keyboard.add_button('❓ У меня индивидуальный запрос', color=VkKeyboardColor.SECONDARY)
     keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
 def get_item_actions_keyboard():
-    """Клавиатура для сообщения с выбранной программой"""
     keyboard = VkKeyboard(one_time=True)
     keyboard.add_button('✅ Хочу заказать', color=VkKeyboardColor.POSITIVE)
     keyboard.add_button('🛠 Доп. услуги', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
     keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
 def get_extra_categories_keyboard():
@@ -291,7 +350,7 @@ def get_extra_categories_keyboard():
     keyboard.add_line()
     keyboard.add_button('➕ Ещё', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
 def get_extra_actions_keyboard():
@@ -300,7 +359,7 @@ def get_extra_actions_keyboard():
     keyboard.add_line()
     keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
 def get_waiting_keyboard():
@@ -313,21 +372,18 @@ def get_to_main_keyboard():
     keyboard.add_button('🏠 В главное меню', color=VkKeyboardColor.PRIMARY)
     return keyboard
 
-def get_programs_choice_keyboard(services, back_state):
-    """
-    Динамически создаёт клавиатуру из названий программ (title).
-    back_state - состояние, на которое будет вести кнопка «Назад».
-    """
+def get_programs_choice_keyboard(services):
+    """Динамическая клавиатура из названий программ"""
     keyboard = VkKeyboard(one_time=True)
-    for service in services:
+    for i, service in enumerate(services):
         title = service.get('title')
         if not title:
             title = service['text'][:30] + '…'
         keyboard.add_button(title, color=VkKeyboardColor.PRIMARY)
-        if len(keyboard.buttons[-1]) >= 3:  # vk keyboard limit per row
+        if (i + 1) % 3 == 0:  # каждые 3 кнопки – новая строка
             keyboard.add_line()
     keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
 # ==================================================
@@ -368,24 +424,18 @@ def send_to_operator(text):
         logging.error(f"Ошибка отправки оператору: {e}")
 
 # ==================================================
-#  ФУНКЦИИ ПОКАЗА УСЛУГ (адаптированы)
+#  ЛОГИКА ПОКАЗА УСЛУГ
 # ==================================================
 def show_program_choice(user_id, category_key, back_state):
-    """
-    Показывает список программ (кнопки) для выбранной категории.
-    back_state — куда вернуться при нажатии «Назад».
-    """
     services = MAIN_SERVICES.get(category_key, [])
     if not services:
         send_message(user_id, 'В этой категории пока нет программ.', get_item_actions_keyboard())
         return
-    # Обновляем состояние: запоминаем категорию и back_state
     user_temp[user_id] = {'category': category_key, 'back_state': back_state}
-    keyboard = get_programs_choice_keyboard(services, back_state)
+    keyboard = get_programs_choice_keyboard(services)
     send_message(user_id, 'Выберите программу:', keyboard)
 
 def show_program_details(user_id, service):
-    """Отправляет подробное описание выбранной программы."""
     send_attachments(user_id, service.get('attachments', []), service['text'], get_item_actions_keyboard())
 
 def show_extra_services(user_id, category_key):
@@ -430,22 +480,21 @@ def process_event(event):
     if user_message == 'привет':
         user_stack[user_id] = ['main']
         user_temp.pop(user_id, None)
-        send_message(user_id, '🤗 Добро пожаловать!', get_main_keyboard())
+        send_message(user_id, 'Добро пожаловать!', get_main_keyboard())
         return
 
     if user_message in ['📞 связь с оператором', 'связь с оператором']:
         user_link = f"https://vk.com/id{user_id}"
-        send_to_operator(f"🔔 Пользователь {user_link} хочет связаться с оператором.")
-        send_message(user_id, "✅ Оператор скоро свяжется с вами. Ожидайте.", get_main_keyboard())
+        send_to_operator(f"Пользователь {user_link} хочет связаться с оператором.")
+        send_message(user_id, "Оператор скоро свяжется с вами.", get_main_keyboard())
         user_stack[user_id] = ['main']
         user_temp.pop(user_id, None)
         return
 
-    # Индивидуальный запрос
-    if user_message in ['❓ у меня индивидуальный запрос', 'у меня индивидуальный запрос', 'индивидуальный запрос']:
+    if user_message in ['❓ у меня индивидуальный запрос', 'у меня индивидуальный запрос']:
         user_link = f"https://vk.com/id{user_id}"
-        send_to_operator(f"❓ ИНДИВИДУАЛЬНЫЙ ЗАПРОС от {user_link}.")
-        send_message(user_id, "✅ Ваш запрос передан администратору. Он свяжется с вами.", get_main_keyboard())
+        send_to_operator(f"ИНДИВИДУАЛЬНЫЙ ЗАПРОС от {user_link}.")
+        send_message(user_id, "Ваш запрос передан администратору.", get_main_keyboard())
         user_stack[user_id] = ['main']
         user_temp.pop(user_id, None)
         return
@@ -457,27 +506,25 @@ def process_event(event):
             user_temp.pop(user_id, None)
             send_message(user_id, 'Заказ отменён.', get_main_keyboard())
             return
-        send_message(user_id, "Отлично! Направляю вашу заявку оператору.", get_to_main_keyboard())
+        send_message(user_id, "Отлично! Вызываю оператора.", get_to_main_keyboard())
         user_link = f"https://vk.com/id{user_id}"
-        send_to_operator(f"💰 НОВЫЙ ЗАКАЗ от {user_link}\n Сообщение: {raw_text}")
+        send_to_operator(f"НОВЫЙ ЗАКАЗ от {user_link}\nСообщение: {raw_text}")
         user_stack[user_id].append('order_completed')
         user_temp.pop(user_id, None)
         return
 
-    # --- ПОСЛЕ ЗАКАЗА ---
     if current_state == 'order_completed':
         if user_message in ['🏠 в главное меню', 'в главное меню']:
             user_stack[user_id] = ['main']
-            send_message(user_id, '⭐ Главное меню', get_main_keyboard())
+            send_message(user_id, 'Главное меню', get_main_keyboard())
         else:
             send_message(user_id, 'Используйте кнопку "В главное меню".', get_to_main_keyboard())
         return
 
-    # --- ОБРАБОТКА КНОПКИ "НАЗАД" (универсально) ---
+    # --- КНОПКА "НАЗАД" ---
     if user_message in ['◀ назад', 'назад'] and len(user_stack[user_id]) > 1:
         user_stack[user_id].pop()
         new_state = user_stack[user_id][-1]
-        # Возврат в зависимости от нового состояния
         if new_state == 'main':
             send_message(user_id, 'Главное меню:', get_main_keyboard())
         elif new_state == 'programs':
@@ -485,15 +532,13 @@ def process_event(event):
         elif new_state == 'birthdays':
             send_message(user_id, 'Выберите возраст:', get_birthdays_keyboard())
         elif new_state == 'choosing_program':
-            # Восстанавливаем список программ для выбранной категории
             cat = user_temp.get(user_id, {}).get('category')
             back = user_temp.get(user_id, {}).get('back_state')
             if cat and back:
                 show_program_choice(user_id, cat, back)
             else:
-                send_message(user_id, 'Выберите программу:', get_main_keyboard())
+                send_message(user_id, 'Главное меню:', get_main_keyboard())
         elif new_state == 'viewing_program':
-            # Возврат к списку программ (choosing_program)
             cat = user_temp.get(user_id, {}).get('category')
             back = user_temp.get(user_id, {}).get('back_state')
             if cat and back:
@@ -508,10 +553,10 @@ def process_event(event):
         return
 
     if user_message in ['◀ назад', 'назад'] and len(user_stack[user_id]) == 1:
-        send_message(user_id, '⭐ Вы уже в главном меню.', get_main_keyboard())
+        send_message(user_id, 'Вы уже в главном меню.', get_main_keyboard())
         return
 
-    # --- НАВИГАЦИЯ ПО МЕНЮ ---
+    # --- НАВИГАЦИЯ ---
     if current_state == 'main':
         if user_message in ['📚 программы', 'программы']:
             user_stack[user_id].append('programs')
@@ -520,9 +565,8 @@ def process_event(event):
     elif current_state == 'programs':
         if user_message in ['🎂 дни рождения', 'дни рождения']:
             user_stack[user_id].append('birthdays')
-            send_message(user_id, 'Теперь выберите возраст', get_birthdays_keyboard())
+            send_message(user_id, 'Выберите возраст', get_birthdays_keyboard())
         elif user_message in ['🏫 для классов', 'для классов']:
-            # Переход в выбор программ для классов
             user_stack[user_id].append('choosing_program')
             show_program_choice(user_id, 'class_all', 'programs')
         elif user_message in ['🛠 доп. услуги', 'доп. услуги']:
@@ -541,7 +585,6 @@ def process_event(event):
             show_program_choice(user_id, 'birthday_8_12', 'birthdays')
 
     elif current_state == 'choosing_program':
-        # Пользователь выбирает конкретную программу из кнопок
         category = user_temp.get(user_id, {}).get('category')
         if not category:
             send_message(user_id, 'Ошибка, попробуйте снова.', get_main_keyboard())
@@ -550,56 +593,35 @@ def process_event(event):
         services = MAIN_SERVICES.get(category, [])
         selected_service = None
         for service in services:
-            title = service.get('title')
-            if not title:
-                title = service['text'][:30] + '…'
-            if user_message == title.lower():
+            title = service.get('title', '')
+            if title and user_message == title.lower():
                 selected_service = service
                 break
         if selected_service:
             user_stack[user_id].append('viewing_program')
-            # Сохраняем ссылку на выбранную услугу во временных данных (можно по индексу)
-            user_temp[user_id]['selected_index'] = services.index(selected_service)
             show_program_details(user_id, selected_service)
         else:
-            # Если не совпало — возможно, пользователь ввёл что-то другое
-            send_message(user_id, 'Пожалуйста, выберите программу из списка.', get_programs_choice_keyboard(services, user_temp.get(user_id, {}).get('back_state', 'main')))
+            send_message(user_id, 'Пожалуйста, выберите программу из списка.', get_programs_choice_keyboard(services))
 
     elif current_state == 'viewing_program':
-        # Пользователь смотрит подробности программы; обрабатываем кнопки действий
         if user_message in ['✅ хочу заказать', 'хочу заказать']:
             user_temp[user_id]['prev_state'] = current_state
             user_stack[user_id].append('waiting_order_text')
-            send_message(
-                user_id,
-                '🔥Осталось совсем чуть-чуть! Заполните небольшую анкету:\n\n'
-                '1) Дата праздника?\n'
-                '2) Имя и возраст именинника?\n'
-                '3) Количество гостей и их возраст?\n'
-                '4) Нужен ли вынос тортика?\n'
-                '5) Адрес проведения?\n'
-                '6) Ваш телефон?\n'
-                '7) Дополнительные пожелания?\n\n',
-                get_waiting_keyboard()
-            )
+            send_message(user_id, 'Осталось совсем чуть-чуть! Заполните анкету:\n\n1) Дата праздника?\n2) Имя и возраст именинника?\n3) Количество гостей?\n4) Ваш телефон?\n\n', get_waiting_keyboard())
         elif user_message in ['🛠 доп. услуги', 'доп. услуги']:
             user_temp[user_id]['prev_state'] = current_state
             user_stack[user_id].append('extra_categories')
             send_message(user_id, 'Выберите категорию доп. услуг:', get_extra_categories_keyboard())
-        # Обработка "Назад" уже сделана выше (попадает в блок возврата)
 
     elif current_state == 'extra_categories':
         if user_message in ['🎨 мастер-классы', 'мастер-классы']:
             user_stack[user_id].append('viewing_extra')
-            user_temp[user_id] = {'category': 'master_classes'}
             show_extra_services(user_id, 'master_classes')
         elif user_message in ['💃 дискотека', 'дискотека']:
             user_stack[user_id].append('viewing_extra')
-            user_temp[user_id] = {'category': 'disco'}
             show_extra_services(user_id, 'disco')
         elif user_message in ['➕ ещё', 'ещё']:
             user_stack[user_id].append('viewing_extra')
-            user_temp[user_id] = {'category': 'more'}
             show_extra_services(user_id, 'more')
         elif user_message == '◀ назад':
             user_stack[user_id].pop()
@@ -611,17 +633,7 @@ def process_event(event):
         if user_message in ['✅ хочу заказать', 'хочу заказать']:
             user_temp[user_id]['prev_state'] = current_state
             user_stack[user_id].append('waiting_order_text')
-            send_message(
-                user_id,
-                '🔥Осталось совсем чуть-чуть! Заполните анкету для доп. услуги:\n\n'
-                '1) Какая услуга интересует?\n'
-                '2) Дата праздника?\n'
-                '3) Ваш телефон?\n\n',
-                get_waiting_keyboard()
-            )
-        # Назад обрабатывается в общем блоке
-
-    # Любое другое сообщение игнорируется
+            send_message(user_id, 'Заполните анкету для доп. услуги:\n1) Какая услуга?\n2) Дата?\n3) Ваш телефон?\n\n', get_waiting_keyboard())
 
 @app.route('/', methods=['GET'])
 def handle_health_check():
