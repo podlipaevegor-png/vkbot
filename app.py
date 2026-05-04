@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
-import json
 import logging
 from pathlib import Path
-from flask import Flask, request, jsonify
+from flask import Flask, request
 import vk_api
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.utils import get_random_id
@@ -20,12 +19,11 @@ OPERATOR_ID = int(os.environ.get('OPERATOR_ID', 0))
 REVIEW_LINK = os.environ.get('REVIEW_LINK', 'https://example.com')
 REVIEW_LINK2 = os.environ.get('REVIEW_LINK2', 'https://vk.com/showlandarz')
 
-# Определяем абсолютный путь к папке с картинками
 BASE_DIR = Path(__file__).resolve().parent
 IMAGES_DIR = BASE_DIR / 'images'
 
 # ==================================================
-#  ДАННЫЕ УСЛУГ (новая структура: images — список путей)
+#  ДАННЫЕ УСЛУГ (со всеми программами, как у вас)
 # ==================================================
 MAIN_SERVICES = {
     'birthday_1_4': [
@@ -149,22 +147,10 @@ MAIN_SERVICES = {
 }
 
 EXTRA_SERVICES = [
-    {
-        'images': ['photo_service.jpg'],
-        'text': '📸 Профессиональный фотограф на весь праздник (100+ фото).'
-    },
-    {
-        'images': ['video_service.jpg'],
-        'text': '🎥 Видеосъёмка с монтажом (3-минутный ролик).'
-    },
-    {
-        'images': ['show_service.jpg'],
-        'text': '🎭 Шоу мыльных пузырей или научное шоу (30 мин).'
-    },
-    {
-        'images': ['candy_service.jpg'],
-        'text': '🍭 Кенди-бар с cupcakes и печеньем.'
-    }
+    {'images': ['photo_service.jpg'], 'text': '📸 Профессиональный фотограф на весь праздник (100+ фото).'},
+    {'images': ['video_service.jpg'], 'text': '🎥 Видеосъёмка с монтажом (3-минутный ролик).'},
+    {'images': ['show_service.jpg'], 'text': '🎭 Шоу мыльных пузырей или научное шоу (30 мин).'},
+    {'images': ['candy_service.jpg'], 'text': '🍭 Кенди-бар с cupcakes и печеньем.'}
 ]
 
 # ==================================================
@@ -175,7 +161,39 @@ vk = vk_session.get_api()
 upload = VkUpload(vk_session)
 
 # ==================================================
-#  КЛАВИАТУРЫ (те же самые)
+#  ПРЕДЗАГРУЗКА ВСЕХ КАРТИНОК ПРИ СТАРТЕ
+# ==================================================
+def preload_attachments(data):
+    """Рекурсивно обходит словари/списки и заменяет 'images' на 'attachments'"""
+    if isinstance(data, dict):
+        if 'images' in data:
+            attachments = []
+            for img in data['images']:
+                full_path = IMAGES_DIR / img
+                if not full_path.exists():
+                    logging.warning(f"Файл не найден: {full_path}")
+                    continue
+                try:
+                    photo = upload.photo_messages(str(full_path))[0]
+                    attachments.append(f"photo{photo['owner_id']}_{photo['id']}")
+                except Exception as e:
+                    logging.error(f"Ошибка загрузки {img}: {e}")
+            data['attachments'] = attachments
+            del data['images']
+        else:
+            for v in data.values():
+                preload_attachments(v)
+    elif isinstance(data, list):
+        for item in data:
+            preload_attachments(item)
+
+print("🖼️ Предзагрузка картинок на сервер ВК...")
+preload_attachments(MAIN_SERVICES)
+preload_attachments(EXTRA_SERVICES)
+print("✅ Все картинки загружены и готовы к отправке.")
+
+# ==================================================
+#  КЛАВИАТУРЫ
 # ==================================================
 def get_main_keyboard():
     keyboard = VkKeyboard(one_time=False)
@@ -240,7 +258,7 @@ def get_to_main_keyboard():
     return keyboard
 
 # ==================================================
-#  ФУНКЦИИ ОТПРАВКИ (с поддержкой нескольких картинок)
+#  ФУНКЦИИ ОТПРАВКИ (быстрые, без повторной загрузки)
 # ==================================================
 def send_message(user_id, text, keyboard=None):
     try:
@@ -251,27 +269,14 @@ def send_message(user_id, text, keyboard=None):
             keyboard=keyboard.get_keyboard() if keyboard else None
         )
     except Exception as e:
-        print(f"Ошибка отправки сообщения: {e}")
+        logging.error(f"Ошибка отправки сообщения: {e}")
 
-def send_images(user_id, image_paths, caption, keyboard):
-    """
-    Отправляет одно сообщение с несколькими фотографиями (до 10).
-    image_paths: список путей к файлам (относительно IMAGES_DIR)
-    """
-    if not image_paths:
+def send_attachments(user_id, attachments, caption, keyboard):
+    if not attachments:
         send_message(user_id, caption, keyboard)
         return
+    attachment_str = ','.join(attachments)
     try:
-        attachments = []
-        for img_path in image_paths:
-            full_path = str(IMAGES_DIR / img_path)
-            photo = upload.photo_messages(full_path)[0]
-            attachment = f"photo{photo['owner_id']}_{photo['id']}"
-            attachments.append(attachment)
-            # ВКонтакте разрешает не более 10 вложений в одном сообщении
-            if len(attachments) >= 10:
-                break
-        attachment_str = ','.join(attachments)
         vk.messages.send(
             user_id=user_id,
             attachment=attachment_str,
@@ -280,21 +285,17 @@ def send_images(user_id, image_paths, caption, keyboard):
             keyboard=keyboard.get_keyboard() if keyboard else None
         )
     except Exception as e:
-        print(f"Ошибка отправки картинок {image_paths}: {e}")
-        send_message(user_id, "❌ Не удалось загрузить картинки.\n" + caption, keyboard)
+        logging.error(f"Ошибка отправки альбома: {e}")
+        send_message(user_id, caption, keyboard)
 
 def send_to_operator(text):
     try:
-        vk.messages.send(
-            user_id=OPERATOR_ID,
-            message=text,
-            random_id=get_random_id()
-        )
+        vk.messages.send(user_id=OPERATOR_ID, message=text, random_id=get_random_id())
     except Exception as e:
-        print(f"Ошибка отправки оператору: {e}")
+        logging.error(f"Ошибка отправки оператору: {e}")
 
 # ==================================================
-#  ФУНКЦИИ ПОКАЗА УСЛУГ
+#  ФУНКЦИИ ПОКАЗА УСЛУГ (используют готовые attachments)
 # ==================================================
 def show_main_services(user_id, category_key):
     services = MAIN_SERVICES.get(category_key, [])
@@ -302,21 +303,18 @@ def show_main_services(user_id, category_key):
         send_message(user_id, 'В этой категории пока нет программ.', get_item_actions_keyboard())
         return
     for service in services:
-        send_images(user_id, service['images'], service['text'], get_item_actions_keyboard())
+        send_attachments(user_id, service.get('attachments', []), service['text'], get_item_actions_keyboard())
 
 def show_extra_services(user_id):
     for service in EXTRA_SERVICES:
-        send_images(user_id, service['images'], service['text'], get_extra_actions_keyboard())
+        send_attachments(user_id, service.get('attachments', []), service['text'], get_extra_actions_keyboard())
 
 # ==================================================
-#  ОСНОВНАЯ ЛОГИКА (хранилище состояний)
+#  ОСНОВНАЯ ЛОГИКА (состояния)
 # ==================================================
 user_stack = {}
 user_temp = {}
 
-# ==================================================
-#  FLASK — ВЕБ-СЕРВЕР ДЛЯ ПРИЁМА ЗАПРОСОВ ОТ ВК
-# ==================================================
 app = Flask(__name__)
 
 @app.route('/', methods=['POST'])
@@ -474,10 +472,13 @@ def process_event(event):
                 '7) Есть ли какие-либо дополнительные комментарии ? 📝\n\n',
                 get_waiting_keyboard()
             )
-    # Любое другое сообщение игнорируется
 
 @app.route('/', methods=['GET'])
 def handle_health_check():
+    return 'OK', 200
+
+@app.route('/ping', methods=['GET'])
+def ping():
     return 'OK', 200
 
 if __name__ == '__main__':
