@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent
 IMAGES_DIR = BASE_DIR / 'images'
 
 # ==================================================
-#  ДАННЫЕ ОСНОВНЫХ ПРОГРАММ (полностью из вашего кода)
+#  ДАННЫЕ ОСНОВНЫХ ПРОГРАММ
 # ==================================================
 MAIN_SERVICES = {
     'birthday_1_4': [
@@ -153,7 +153,7 @@ MAIN_SERVICES = {
 }
 
 # ==================================================
-#  ДАННЫЕ ДОПОЛНИТЕЛЬНЫХ УСЛУГ (с разделами)
+#  ДАННЫЕ ДОПОЛНИТЕЛЬНЫХ УСЛУГ
 # ==================================================
 EXTRA_SERVICES = {
     'master_classes': [
@@ -238,17 +238,16 @@ EXTRA_SERVICES = {
 }
 
 # ==================================================
-#  ИНИЦИАЛИЗАЦИЯ VK API (версия 5.199)
+#  ИНИЦИАЛИЗАЦИЯ VK API
 # ==================================================
 vk_session = vk_api.VkApi(token=GROUP_TOKEN, api_version='5.199')
 vk = vk_session.get_api()
 upload = VkUpload(vk_session)
 
 # ==================================================
-#  ПРЕДЗАГРУЗКА ВСЕХ КАРТИНОК ПРИ СТАРТЕ
+#  ПРЕДЗАГРУЗКА КАРТИНОК
 # ==================================================
 def preload_attachments(data):
-    """Рекурсивно обходит словари/списки и заменяет 'images' на 'attachments'"""
     if isinstance(data, dict):
         if 'images' in data:
             attachments = []
@@ -305,11 +304,12 @@ def get_birthdays_keyboard():
     keyboard.add_button('🧒 5-7 лет', color=VkKeyboardColor.PRIMARY)
     keyboard.add_button('👦 8-12 лет', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
+    keyboard.add_button('❓ У меня индивидуальный запрос', color=VkKeyboardColor.SECONDARY)
+    keyboard.add_line()
     keyboard.add_button('◀ Назад', color=VkKeyboardColor.PRIMARY)
     return keyboard
 
 def get_item_actions_keyboard():
-    """Клавиатура для сообщений с программой (с кнопкой Доп. услуги)"""
     keyboard = VkKeyboard(one_time=True)
     keyboard.add_button('✅ Хочу заказать', color=VkKeyboardColor.POSITIVE)
     keyboard.add_button('🛠 Доп. услуги', color=VkKeyboardColor.PRIMARY)
@@ -330,7 +330,6 @@ def get_extra_categories_keyboard():
     return keyboard
 
 def get_extra_actions_keyboard():
-    """Клавиатура для доп. услуг (без кнопки Доп. услуги)"""
     keyboard = VkKeyboard(one_time=True)
     keyboard.add_button('✅ Хочу заказать', color=VkKeyboardColor.POSITIVE)
     keyboard.add_line()
@@ -350,7 +349,7 @@ def get_to_main_keyboard():
     return keyboard
 
 # ==================================================
-#  ФУНКЦИИ ОТПРАВКИ (быстрые, без повторной загрузки)
+#  ФУНКЦИИ ОТПРАВКИ
 # ==================================================
 def send_message(user_id, text, keyboard=None):
     try:
@@ -406,7 +405,7 @@ def show_extra_services(user_id, category_key):
         send_attachments(user_id, service.get('attachments', []), service['text'], get_extra_actions_keyboard())
 
 # ==================================================
-#  ОСНОВНАЯ ЛОГИКА (состояния)
+#  ОСНОВНАЯ ЛОГИКА
 # ==================================================
 user_stack = {}
 user_temp = {}
@@ -446,6 +445,15 @@ def process_event(event):
         user_link = f"https://vk.com/id{user_id}"
         send_to_operator(f"🔔 Пользователь {user_link} хочет связаться с оператором.")
         send_message(user_id, "✅ Оператор скоро свяжется с вами. Ожидайте.", get_main_keyboard())
+        user_stack[user_id] = ['main']
+        user_temp.pop(user_id, None)
+        return
+
+    # Индивидуальный запрос (кнопка в меню выбора возраста)
+    if user_message in ['❓ у меня индивидуальный запрос', 'у меня индивидуальный запрос', 'индивидуальный запрос']:
+        user_link = f"https://vk.com/id{user_id}"
+        send_to_operator(f"❓ ИНДИВИДУАЛЬНЫЙ ЗАПРОС от {user_link}.")
+        send_message(user_id, "✅ Ваш запрос передан администратору. Он свяжется с вами в ближайшее время.", get_main_keyboard())
         user_stack[user_id] = ['main']
         user_temp.pop(user_id, None)
         return
@@ -492,7 +500,7 @@ def process_event(event):
         return
 
     if user_message in ['◀ назад', 'назад'] and len(user_stack[user_id]) == 1:
-        send_message(user_id, '⭐Вжух! И Вы уже в главном меню.', get_main_keyboard())
+        send_message(user_id, '⭐ Вжух! И Вы уже в главном меню.', get_main_keyboard())
         return
 
     # --- НАВИГАЦИЯ ПО МЕНЮ ---
@@ -578,7 +586,6 @@ def process_event(event):
                 '7) Есть ли какие-либо дополнительные комментарии ? 📝\n\n',
                 get_waiting_keyboard()
             )
-    # Любое другое сообщение игнорируется
 
 @app.route('/', methods=['GET'])
 def handle_health_check():
