@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent
 IMAGES_DIR = BASE_DIR / 'images'
 
 # ==================================================
-#  ДАННЫЕ УСЛУГ (со всеми программами, как у вас)
+#  ДАННЫЕ УСЛУГ (со всеми программами)
 # ==================================================
 MAIN_SERVICES = {
     'birthday_1_4': [
@@ -124,7 +124,8 @@ MAIN_SERVICES = {
             'text': '🔥 «Мульти-квиз» 🔥\n\nДанную программу проводят ведущие в ярких костюмах\n\nЭто настоящий квиз для детей по самым популярным играм, фильмам, мультикам и даже блогерам ютуба 🙀\n\nУчастники делятся минимум на две команды, заполняют бланки после каждого раунда и получают грамоту победителя в конце! Все, как у взрослых 😍\n\nПрограмма проходит с использованием проектора / подключения к вашему телевизору и тематическим реквизитом\n\nДлительность: 1 час\nСтоимость: 6500 р , \n(2 ведущих, бланки и награды для каждой команды, техническое оборудование и игровой реквизит)'
         }
     ],
-    'class_1_4': [
+    # Объединённые программы для классов (все вместе)
+    'class_all': [
         {
             'images': ['class_1_4_1.jpg'],
             'text': '🧱 Мастер-класс "Лего-конструирование" – 1 час.'
@@ -132,9 +133,7 @@ MAIN_SERVICES = {
         {
             'images': ['class_1_4_2.jpg'],
             'text': '🏛️ Интерактивная экскурсия в музей.'
-        }
-    ],
-    'class_5_9': [
+        },
         {
             'images': ['class_5_9_1.jpg'],
             'text': '🧠 Интеллектуальный квиз "Что? Где? Когда?"'
@@ -216,6 +215,8 @@ def get_programs_keyboard():
     keyboard.add_line()
     keyboard.add_button('🛠 Доп. услуги', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
+    keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.POSITIVE)
+    keyboard.add_line()
     keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
@@ -225,21 +226,18 @@ def get_birthdays_keyboard():
     keyboard.add_button('🧒 5-7 лет', color=VkKeyboardColor.PRIMARY)
     keyboard.add_button('👦 8-12 лет', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
-    return keyboard
-
-def get_classes_keyboard():
-    keyboard = VkKeyboard(one_time=True)
-    keyboard.add_button('📘 1-4 класс', color=VkKeyboardColor.PRIMARY)
-    keyboard.add_button('📙 5-9 класс', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.POSITIVE)
     keyboard.add_line()
     keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
 def get_item_actions_keyboard():
+    """Клавиатура для каждого сообщения с программой (добавлена кнопка связи с оператором)"""
     keyboard = VkKeyboard(one_time=True)
     keyboard.add_button('✅ Хочу заказать', color=VkKeyboardColor.POSITIVE)
     keyboard.add_button('🛠 Доп. услуги', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_line()
+    keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.POSITIVE)
     keyboard.add_line()
     keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
@@ -391,8 +389,6 @@ def process_event(event):
             send_message(user_id, 'Какая программа вам нужна? ⚡', get_programs_keyboard())
         elif new_state == 'birthdays':
             send_message(user_id, 'Теперь давайте выберем возраст 🔥', get_birthdays_keyboard())
-        elif new_state == 'classes':
-            send_message(user_id, 'Теперь давайте выберем класс 🔥', get_classes_keyboard())
         elif new_state == 'viewing_main':
             send_message(user_id, 'Выберите действие', get_item_actions_keyboard())
         elif new_state == 'viewing_extra':
@@ -413,8 +409,10 @@ def process_event(event):
             user_stack[user_id].append('birthdays')
             send_message(user_id, 'Теперь давайте выберем возраст 🔥', get_birthdays_keyboard())
         elif user_message in ['🏫 для классов', 'для классов']:
-            user_stack[user_id].append('classes')
-            send_message(user_id, 'Теперь давайте выберем класс 🔥', get_classes_keyboard())
+            # Объединённая категория классов без промежуточного выбора
+            user_stack[user_id].append('viewing_main')
+            user_temp[user_id] = {'category': 'class_all'}
+            show_main_services(user_id, 'class_all')
         elif user_message in ['🛠 доп. услуги', 'доп. услуги']:
             user_stack[user_id].append('viewing_extra')
             show_extra_services(user_id)
@@ -431,15 +429,6 @@ def process_event(event):
             user_stack[user_id].append('viewing_main')
             user_temp[user_id] = {'category': 'birthday_8_12'}
             show_main_services(user_id, 'birthday_8_12')
-    elif current_state == 'classes':
-        if user_message == '📘 1-4 класс':
-            user_stack[user_id].append('viewing_main')
-            user_temp[user_id] = {'category': 'class_1_4'}
-            show_main_services(user_id, 'class_1_4')
-        elif user_message == '📙 5-9 класс':
-            user_stack[user_id].append('viewing_main')
-            user_temp[user_id] = {'category': 'class_5_9'}
-            show_main_services(user_id, 'class_5_9')
     elif current_state == 'viewing_main':
         if user_message in ['✅ хочу заказать', 'хочу заказать']:
             user_temp[user_id]['prev_state'] = current_state
@@ -460,6 +449,7 @@ def process_event(event):
             user_temp[user_id]['prev_state'] = current_state
             user_stack[user_id].append('viewing_extra')
             show_extra_services(user_id)
+        # Кнопка "Связь с оператором" уже обрабатывается глобально в начале
     elif current_state == 'viewing_extra':
         if user_message in ['✅ хочу заказать', 'хочу заказать']:
             user_temp[user_id]['prev_state'] = current_state
