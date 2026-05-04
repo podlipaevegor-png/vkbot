@@ -216,7 +216,7 @@ def get_programs_keyboard():
     keyboard.add_line()
     keyboard.add_button('🛠 Доп. услуги', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.PRIMARY)
     return keyboard
 
 def get_birthdays_keyboard():
@@ -226,7 +226,7 @@ def get_birthdays_keyboard():
     keyboard.add_button('🧒 5-7 лет', color=VkKeyboardColor.PRIMARY)
     keyboard.add_button('👦 8-12 лет', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.PRIMARY)
     return keyboard
 
 def get_item_actions_keyboard():
@@ -235,9 +235,9 @@ def get_item_actions_keyboard():
     keyboard.add_button('✅ Хочу заказать', color=VkKeyboardColor.POSITIVE)
     keyboard.add_button('🛠 Доп. услуги', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
+    keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.PRIMARY) 
     keyboard.add_line()
-    keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.POSITIVE)
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.PRIMARY)
     return keyboard
 
 def get_extra_actions_keyboard():
@@ -245,14 +245,14 @@ def get_extra_actions_keyboard():
     keyboard = VkKeyboard(one_time=True)
     keyboard.add_button('✅ Хочу заказать', color=VkKeyboardColor.POSITIVE)
     keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
+    keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.PRIMARY) 
     keyboard.add_line()
-    keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.POSITIVE)
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.PRIMARY)
     return keyboard
 
 def get_waiting_keyboard():
     keyboard = VkKeyboard(one_time=True)
-    keyboard.add_button('◀ Отмена', color=VkKeyboardColor.NEGATIVE)
+    keyboard.add_button('◀ Отмена', color=VkKeyboardColor.PRIMARY)
     return keyboard
 
 def get_to_main_keyboard():
