@@ -209,44 +209,45 @@ def get_main_keyboard():
     return keyboard
 
 def get_programs_keyboard():
+    """Меню выбора категорий (без кнопки связи с оператором)"""
     keyboard = VkKeyboard(one_time=True)
     keyboard.add_button('🎂 Дни рождения', color=VkKeyboardColor.PRIMARY)
     keyboard.add_button('🏫 Для классов', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
     keyboard.add_button('🛠 Доп. услуги', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.POSITIVE)
-    keyboard.add_line()
     keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
 def get_birthdays_keyboard():
+    """Выбор возраста (без кнопки связи с оператором)"""
     keyboard = VkKeyboard(one_time=True)
     keyboard.add_button('👶 1-4 года', color=VkKeyboardColor.PRIMARY)
     keyboard.add_button('🧒 5-7 лет', color=VkKeyboardColor.PRIMARY)
     keyboard.add_button('👦 8-12 лет', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.POSITIVE)
-    keyboard.add_line()
     keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
 def get_item_actions_keyboard():
-    """Клавиатура для каждого сообщения с программой (добавлена кнопка связи с оператором)"""
+    """Клавиатура для сообщений с программой (связь с оператором в самом низу)"""
     keyboard = VkKeyboard(one_time=True)
     keyboard.add_button('✅ Хочу заказать', color=VkKeyboardColor.POSITIVE)
     keyboard.add_button('🛠 Доп. услуги', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.POSITIVE)
-    keyboard.add_line()
     keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
+    keyboard.add_line()
+    keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.POSITIVE)
     return keyboard
 
 def get_extra_actions_keyboard():
+    """Клавиатура для доп. услуг (связь с оператором в самом низу)"""
     keyboard = VkKeyboard(one_time=True)
     keyboard.add_button('✅ Хочу заказать', color=VkKeyboardColor.POSITIVE)
     keyboard.add_line()
     keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
+    keyboard.add_line()
+    keyboard.add_button('📞 Связь с оператором', color=VkKeyboardColor.POSITIVE)
     return keyboard
 
 def get_waiting_keyboard():
