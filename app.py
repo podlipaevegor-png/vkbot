@@ -378,9 +378,15 @@ def get_programs_choice_keyboard(services):
     for i, service in enumerate(services):
         title = service.get('title')
         if not title:
-            title = service['text'][:30] + '…'
+            # Берём первые 30 символов из текста
+            text = service.get('text', '')
+            if text:
+                title = text[:30] + '…'
+            else:
+                title = "Без названия"
         keyboard.add_button(title, color=VkKeyboardColor.PRIMARY)
-        if (i + 1) % 3 == 0:  # каждые 3 кнопки – новая строка
+        # каждые 3 кнопки — новая строка
+        if (i + 1) % 3 == 0:
             keyboard.add_line()
     keyboard.add_line()
     keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
@@ -428,6 +434,7 @@ def send_to_operator(text):
 # ==================================================
 def show_program_choice(user_id, category_key, back_state):
     services = MAIN_SERVICES.get(category_key, [])
+    print(f"DEBUG: show_program_choice({category_key}) -> services count: {len(services)}")
     if not services:
         send_message(user_id, 'В этой категории пока нет программ.', get_item_actions_keyboard())
         return
