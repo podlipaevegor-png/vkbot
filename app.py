@@ -388,13 +388,13 @@ def process_event(event):
                 if extra_cat:
                     show_extra_choice(user_id, extra_cat, 'extra_categories')
                 else:
-                    send_message(user_id, 'Выберите категорию', get_extra_categories_keyboard())
+                    send_message(user_id, '❓ Выберите категорию', get_extra_categories_keyboard())
             elif new_state == 'viewing_extra_detail':
                 extra_cat = user_temp.get(user_id, {}).get('extra_category')
                 if extra_cat:
                     show_extra_choice(user_id, extra_cat, 'extra_categories')
                 else:
-                    send_message(user_id, 'Выберите категорию', get_extra_categories_keyboard())
+                    send_message(user_id, '❓ Выберите категорию', get_extra_categories_keyboard())
         else:
             send_message(user_id, '🔥 Вжух! И вы уже в главном меню!', get_main_keyboard())
         return
@@ -410,28 +410,28 @@ def process_event(event):
                 if last_program:
                     show_program_details(user_id, last_program)
                 else:
-                    send_message(user_id, 'Заказ отменён.', get_main_keyboard())
+                    send_message(user_id, '☹ Заказ отменён.', get_main_keyboard())
             elif prev_state == 'viewing_extra_detail':
                 last_extra = user_temp.get(user_id, {}).get('last_viewed_extra')
                 if last_extra:
                     show_extra_details(user_id, last_extra)
                 else:
-                    send_message(user_id, 'Заказ отменён.', get_main_keyboard())
+                    send_message(user_id, '☹ Заказ отменён.', get_main_keyboard())
             elif prev_state == 'choosing_program':
                 cat = user_temp.get(user_id, {}).get('category')
                 back = user_temp.get(user_id, {}).get('back_state')
                 if cat and back:
                     show_program_choice(user_id, cat, back)
                 else:
-                    send_message(user_id, 'Заказ отменён.', get_main_keyboard())
+                    send_message(user_id, '☹ Заказ отменён.', get_main_keyboard())
             elif prev_state == 'choosing_extra':
                 extra_cat = user_temp.get(user_id, {}).get('extra_category')
                 if extra_cat:
                     show_extra_choice(user_id, extra_cat, 'extra_categories')
                 else:
-                    send_message(user_id, 'Заказ отменён.', get_main_keyboard())
+                    send_message(user_id, '☹ Заказ отменён.', get_main_keyboard())
             else:
-                send_message(user_id, 'Заказ отменён.', get_main_keyboard())
+                send_message(user_id, '☹ Заказ отменён.', get_main_keyboard())
             user_temp.pop(user_id, None)
             return
         # не отмена – отправляем заказ оператору
@@ -515,7 +515,7 @@ def process_event(event):
     elif current_state == 'viewing_program':
         if user_message in ['✅ хочу заказать', 'хочу заказать']:
             user_stack[user_id].append('waiting_order_text')
-            send_message(user_id, '🔥 Осталось совсем чуть-чуть! Заполните небольшую анкету и пришлите её прямо сюда 📌 \n\n1) На какие даты рассчитываете проведение праздника? 📅 \n2) Для кого планируется праздник? (Имя, возраст) 🎆 \n3) Сколько гостей и какого возраста планируется на празднике? 👫\n4) Нужно ли в конце программы делать торжественный вынос тортика? 🎂 \n5) Место проведения праздника, адрес? 🙂 \n6) Ваш контактный номер телефона? 📞 \n7) Есть ли какие-либо дополнительные комментарии ? 📝\n\n', get_waiting_keyboard())
+            send_message(user_id, '🔥 Осталось совсем чуть-чуть! Заполните небольшую анкету и пришлите её прямо сюда 📌 \n\n1) Какая программа вам приглянулась? (+ доп.услуги, если требуется) ✅ \n2) На какие даты рассчитываете проведение праздника? 📅 \n3) Для кого планируется праздник? (Имя, возраст) 🎆 \n4) Сколько гостей и какого возраста планируется на празднике? 👫\n5) Нужно ли в конце программы делать торжественный вынос тортика/сладостей? 🎂 \n6) Место проведения праздника, адрес? 🙂 \n7) Ваш контактный номер телефона? 📞 \n8) Есть ли какие-либо дополнительные комментарии ? 📝\n\n', get_waiting_keyboard())
         elif user_message in ['🛠 доп. услуги', 'доп. услуги']:
             user_stack[user_id].append('extra_categories')
             send_message(user_id, '🤗 Выберите категорию доп. услуг', get_extra_categories_keyboard())
@@ -534,7 +534,7 @@ def process_event(event):
             user_stack[user_id].pop()
             send_message(user_id, '❓ Какая программа вам нужна?', get_programs_keyboard())
         else:
-            send_message(user_id, 'Пожалуйста, выберите категорию:', get_extra_categories_keyboard())
+            send_message(user_id, 'Пожалуйста, выберите категорию', get_extra_categories_keyboard())
 
     elif current_state == 'choosing_extra':
         extra_category = user_temp.get(user_id, {}).get('extra_category')
@@ -567,7 +567,7 @@ def process_event(event):
     elif current_state == 'viewing_extra_detail':
         if user_message in ['✅ хочу заказать', 'хочу заказать']:
             user_stack[user_id].append('waiting_order_text')
-            send_message(user_id, '🔥 Осталось совсем чуть-чуть! Заполните небольшую анкету и пришлите её прямо сюда 📌 \n\n1) На какие даты рассчитываете проведение праздника? 📅 \n2) Для кого планируется праздник? (Имя, возраст) 🎆 \n3) Сколько гостей и какого возраста планируется на празднике? 👫\n4) Нужно ли в конце программы делать торжественный вынос тортика? 🎂 \n5) Место проведения праздника, адрес? 🙂 \n6) Ваш контактный номер телефона? 📞 \n7) Есть ли какие-либо дополнительные комментарии ? 📝\n\n', get_waiting_keyboard())
+            send_message(user_id, '🔥 Осталось совсем чуть-чуть! Заполните небольшую анкету и пришлите её прямо сюда 📌 \n\n1) Какая программа вам приглянулась? (+ доп.услуги, если требуется) ✅ \n2) На какие даты рассчитываете проведение праздника? 📅 \n3) Для кого планируется праздник? (Имя, возраст) 🎆 \n4) Сколько гостей и какого возраста планируется на празднике? 👫\n5) Нужно ли в конце программы делать торжественный вынос тортика/сладостей? 🎂 \n6) Место проведения праздника, адрес? 🙂 \n7) Ваш контактный номер телефона? 📞 \n8) Есть ли какие-либо дополнительные комментарии ? 📝\n\n', get_waiting_keyboard())
 
 @app.route('/', methods=['GET'])
 def handle_health_check():
