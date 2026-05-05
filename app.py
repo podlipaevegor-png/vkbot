@@ -353,16 +353,6 @@ def get_birthdays_keyboard():
     keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
-def get_class_choice_keyboard():
-    keyboard = VkKeyboard(one_time=True)
-    keyboard.add_button('🔥 Мульти-квиз', color=VkKeyboardColor.PRIMARY)
-    keyboard.add_button('☀ Рашн Стайл', color=VkKeyboardColor.PRIMARY)
-    keyboard.add_line()
-    keyboard.add_button('🛠 Доп. услуги', color=VkKeyboardColor.PRIMARY)
-    keyboard.add_line()
-    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
-    return keyboard
-
 def get_item_actions_keyboard():
     keyboard = VkKeyboard(one_time=True)
     keyboard.add_button('✅ Хочу заказать', color=VkKeyboardColor.POSITIVE)
@@ -403,6 +393,7 @@ def get_to_main_keyboard():
     return keyboard
 
 def get_programs_choice_keyboard(services):
+    """Динамическая клавиатура из названий программ (3 кнопки в строке)"""
     keyboard = VkKeyboard(one_time=True)
     for i, service in enumerate(services):
         title = service.get('title')
@@ -483,8 +474,6 @@ def show_program_choice(user_id, category_key, back_state):
 
 def show_program_details(user_id, service):
     send_attachments(user_id, service.get('attachments', []), service['text'], get_item_actions_keyboard())
-    # Сохраняем последнюю просмотренную программу для возможного возврата после отмены
-    user_temp[user_id]['last_viewed_program'] = service
 
 def show_extra_choice(user_id, category_key, back_state):
     services = EXTRA_SERVICES.get(category_key, [])
@@ -497,7 +486,6 @@ def show_extra_choice(user_id, category_key, back_state):
 
 def show_extra_details(user_id, service):
     send_attachments(user_id, service.get('attachments', []), service['text'], get_extra_actions_keyboard())
-    user_temp[user_id]['last_viewed_extra'] = service
 
 # ==================================================
 #  ОСНОВНАЯ ЛОГИКА (состояния)
@@ -559,44 +547,39 @@ def process_event(event):
     # --- РЕЖИМ ОЖИДАНИЯ АНКЕТЫ ---
     if current_state == 'waiting_order_text':
         if user_message in ['◀ отмена', 'отмена']:
-            user_stack[user_id].pop()  # удаляем waiting_order_text
-            new_state = user_stack[user_id][-1] if user_stack[user_id] else 'main'
-            # Возвращаемся в предыдущее состояние
-            if new_state == 'class_choice':
-                send_message(user_id, '❓ Заказ отменён. Выберите программу или дополнительные услуги:', get_class_choice_keyboard())
-            elif new_state == 'choosing_program':
+            user_stack[user_id].pop()
+            previous_state = user_stack[user_id][-1] if user_stack[user_id] else 'main'
+            if previous_state == 'viewing_program':
+                # Вернуться к просмотру программы
+                last_program = user_temp.get(user_id, {}).get('last_viewed_program')
+                if last_program:
+                    show_program_details(user_id, last_program)
+                else:
+                    send_message(user_id, 'Заказ отменён.', get_main_keyboard())
+            elif previous_state == 'viewing_extra_detail':
+                last_extra = user_temp.get(user_id, {}).get('last_viewed_extra')
+                if last_extra:
+                    show_extra_details(user_id, last_extra)
+                else:
+                    send_message(user_id, 'Заказ отменён.', get_main_keyboard())
+            elif previous_state == 'choosing_program':
                 cat = user_temp.get(user_id, {}).get('category')
                 back = user_temp.get(user_id, {}).get('back_state')
                 if cat and back:
                     show_program_choice(user_id, cat, back)
                 else:
-                    send_message(user_id, 'Главное меню', get_main_keyboard())
-            elif new_state == 'extra_categories':
-                send_message(user_id, 'Выберите категорию доп. услуг:', get_extra_categories_keyboard())
-            elif new_state == 'choosing_extra':
+                    send_message(user_id, 'Заказ отменён.', get_main_keyboard())
+            elif previous_state == 'choosing_extra':
                 extra_cat = user_temp.get(user_id, {}).get('extra_category')
                 if extra_cat:
                     show_extra_choice(user_id, extra_cat, 'extra_categories')
                 else:
-                    send_message(user_id, 'Выберите категорию доп. услуг:', get_extra_categories_keyboard())
-            elif new_state == 'viewing_program':
-                last_service = user_temp.get(user_id, {}).get('last_viewed_program')
-                if last_service:
-                    show_program_details(user_id, last_service)
-                else:
-                    send_message(user_id, 'Главное меню', get_main_keyboard())
-            elif new_state == 'viewing_extra_detail':
-                last_service = user_temp.get(user_id, {}).get('last_viewed_extra')
-                if last_service:
-                    show_extra_details(user_id, last_service)
-                else:
-                    send_message(user_id, 'Выберите категорию доп. услуг:', get_extra_categories_keyboard())
+                    send_message(user_id, 'Заказ отменён.', get_main_keyboard())
             else:
-                send_message(user_id, '☹ Заказ отменён', get_main_keyboard())
+                send_message(user_id, 'Заказ отменён.', get_main_keyboard())
             user_temp.pop(user_id, None)
             return
-
-        # Обычная отправка анкеты
+        # Отправка анкеты оператору
         send_message(user_id, "📞 Отлично! Вызываю оператора, нужно совсем немного подождать!", get_to_main_keyboard())
         user_link = f"https://vk.com/id{user_id}"
         send_to_operator(f"НОВЫЙ ЗАКАЗ от {user_link}\nСообщение: {raw_text}")
@@ -622,8 +605,6 @@ def process_event(event):
             send_message(user_id, '❓ Какая программа вам нужна?', get_programs_keyboard())
         elif new_state == 'birthdays':
             send_message(user_id, '✅ Выберите возраст', get_birthdays_keyboard())
-        elif new_state == 'class_choice':
-            send_message(user_id, 'Выберите программу или дополнительные услуги:', get_class_choice_keyboard())
         elif new_state == 'choosing_program':
             cat = user_temp.get(user_id, {}).get('category')
             back = user_temp.get(user_id, {}).get('back_state')
@@ -642,7 +623,11 @@ def process_event(event):
         elif new_state == 'extra_categories':
             send_message(user_id, '❓ Выберите категорию доп. услуг', get_extra_categories_keyboard())
         elif new_state == 'choosing_extra':
-            send_message(user_id, '❓ Выберите категорию доп. услуг', get_extra_categories_keyboard())
+            extra_cat = user_temp.get(user_id, {}).get('extra_category')
+            if extra_cat:
+                show_extra_choice(user_id, extra_cat, 'extra_categories')
+            else:
+                send_message(user_id, '❓ Выберите категорию доп. услуг', get_extra_categories_keyboard())
         elif new_state == 'viewing_extra_detail':
             extra_cat = user_temp.get(user_id, {}).get('extra_category')
             if extra_cat:
@@ -666,8 +651,8 @@ def process_event(event):
             user_stack[user_id].append('birthdays')
             send_message(user_id, 'Выберите возраст', get_birthdays_keyboard())
         elif user_message in ['🏫 для классов', 'для классов']:
-            user_stack[user_id].append('class_choice')
-            send_message(user_id, 'Выберите программу или дополнительные услуги:', get_class_choice_keyboard())
+            user_stack[user_id].append('choosing_program')
+            show_program_choice(user_id, 'class_all', 'programs')
         elif user_message in ['🛠 доп. услуги', 'доп. услуги']:
             user_stack[user_id].append('extra_categories')
             send_message(user_id, '🤗 Давайте выберем категорию', get_extra_categories_keyboard())
@@ -683,44 +668,8 @@ def process_event(event):
             user_stack[user_id].append('choosing_program')
             show_program_choice(user_id, 'birthday_8_12', 'birthdays')
 
-    elif current_state == 'class_choice':
-        # Сравниваем по оригинальному тексту (raw_text) без приведения к нижнему регистру,
-        # чтобы сохранить эмодзи и точное совпадение.
-        raw_lower = raw_text.lower()
-        if raw_lower == '🔥 мульти-квиз'.lower():
-            services = MAIN_SERVICES.get('class_all', [])
-            selected = None
-            for s in services:
-                if s.get('title') == '🔥 Мульти-квиз':
-                    selected = s
-                    break
-            if selected:
-                user_stack[user_id].append('viewing_program')
-                show_program_details(user_id, selected)
-            else:
-                send_message(user_id, 'Программа не найдена.', get_class_choice_keyboard())
-        elif raw_lower == '☀ рашн стайл'.lower():
-            services = MAIN_SERVICES.get('class_all', [])
-            selected = None
-            for s in services:
-                if s.get('title') == '☀ Рашн Стайл':
-                    selected = s
-                    break
-            if selected:
-                user_stack[user_id].append('viewing_program')
-                show_program_details(user_id, selected)
-            else:
-                send_message(user_id, 'Программа не найдена.', get_class_choice_keyboard())
-        elif user_message in ['🛠 доп. услуги', 'доп. услуги']:
-            user_stack[user_id].append('extra_categories')
-            send_message(user_id, '🤗 Давайте выберем категорию', get_extra_categories_keyboard())
-        elif user_message == '◀ назад':
-            user_stack[user_id].pop()
-            send_message(user_id, '❓ Какая программа вам нужна?', get_programs_keyboard())
-        else:
-            send_message(user_id, 'Пожалуйста, выберите программу или дополнительные услуги:', get_class_choice_keyboard())
-
     elif current_state == 'choosing_program':
+        # Обработка специальной кнопки "Доп. услуги" – она не должна появляться, но на всякий случай
         if user_message in ['🛠 доп. услуги', 'доп. услуги']:
             user_stack[user_id].append('extra_categories')
             send_message(user_id, '🤗 Давайте выберем категорию', get_extra_categories_keyboard())
@@ -740,7 +689,7 @@ def process_event(event):
                 break
         if selected_service:
             if selected_service.get('special'):
-                send_message(user_id, "🤗 Мы подберем для вас индивидуальную программу! Просто напишите ваш запрос, и наш менеджер свяжется с вами.", get_main_keyboard())
+                send_message(user_id, "Мы подберем для вас индивидуальную программу! Просто напишите ваш запрос, и наш менеджер свяжется с вами.", get_main_keyboard())
                 user_link = f"https://vk.com/id{user_id}"
                 send_to_operator(f"❓ ПОЛЬЗОВАТЕЛЬ НЕ НАШЕЛ ПРОГРАММУ. Ссылка: {user_link}")
                 user_stack[user_id] = ['main']
@@ -748,6 +697,7 @@ def process_event(event):
                 return
             else:
                 user_stack[user_id].append('viewing_program')
+                user_temp[user_id]['last_viewed_program'] = selected_service
                 show_program_details(user_id, selected_service)
         else:
             send_message(user_id, '🤗 Пожалуйста, выберите программу из списка', get_programs_choice_keyboard(services))
@@ -801,6 +751,7 @@ def process_event(event):
                 return
             else:
                 user_stack[user_id].append('viewing_extra_detail')
+                user_temp[user_id]['last_viewed_extra'] = selected_service
                 show_extra_details(user_id, selected_service)
         else:
             send_message(user_id, 'Пожалуйста, выберите услугу из списка', get_extra_choice_keyboard(services))
@@ -810,13 +761,6 @@ def process_event(event):
             user_temp[user_id]['prev_state'] = current_state
             user_stack[user_id].append('waiting_order_text')
             send_message(user_id, '🔥 Осталось совсем чуть-чуть! Заполните небольшую анкету и пришлите её прямо сюда 📌 \n\n1) Какая услуга вас интересует?\n2) Дата проведения?\n3) Ваш контактный телефон?\n\n', get_waiting_keyboard())
-        elif user_message in ['◀ назад', 'назад']:
-            user_stack[user_id].pop()
-            extra_cat = user_temp.get(user_id, {}).get('extra_category')
-            if extra_cat:
-                show_extra_choice(user_id, extra_cat, 'extra_categories')
-            else:
-                send_message(user_id, '❓ Выберите категорию доп. услуг', get_extra_categories_keyboard())
 
 @app.route('/', methods=['GET'])
 def handle_health_check():
