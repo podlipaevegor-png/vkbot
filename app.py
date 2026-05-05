@@ -176,7 +176,7 @@ MAIN_SERVICES = {
         {
             'images': ['rus.jpg'],
             'title': '☀ Рашн Стайл',
-            'text': ' ☀«РАШН СТАЙЛ» — ПРАЗДНИК, КОТОРЫЙ ДЕТИ ЗАПОМНЯТ!\n\nУважаемые родители!\nЕсли вы хотите подарить ребёнку яркий, современный, живой новогодний праздник — программа «Рашн Стайл» создана специально для школьников и идеально попадает в их настроение.\nЭто не скучный утренник — это большая интерактивная тусовка прямо в классе, где каждый ребёнок вовлечён с первой секунды.\n\n❄️ Что будет внутри программы? ❄️\n\n🎭 Тур «Баба Яга — крышу сносит»\nСовременный квиз, где дети выбирают стороны зала и отвечают на вопросы.\nОшибся — выполняешь смешное «задание Яги» (танцы, звуки, mini-движ).\n\n💰 Игра «Сундук Криптон»\nДинамичная игра «музыка–стоп»:\n— музыка играет — дети танцуют,\n— музыка выключается — бегут к одному из сундуков.\nОдин приносит «золото», второй — забавное испытание.\n\n❄️ «Заморожу» от Деда Мороза\nНа экране появляются позы — дети должны повторить мгновенно.\nНе успел — «ледышка».\nИгра на реакцию, смех и скорость.\n\n💥 Челлендж-блок\nЗдесь мы используем реквизит. Выбираем под возраст и энергетику группы.\n\n🎵 Тур «Баян Микс»\nДети угадывают современный и народный ремикс-хит:\n— кричат ответы,\n— танцуют тренды,\n— выполняют задания под музыку.\nЭто один из самых любимых туров у детей.\n\n🛡 Богатырский баттл\nКомандные челленджи: сила, танец, скорость, шумометр.\nДети получают богатырские очки, болеют друг за друга, ощущают командный дух.\n\n📖 Финальный тур «Жили-были»\nСказочные и веселые предсказания.\nТихий, добрый и смешной интерактив, чтобы дети плавно переключились после активной программы.\n\n✨ Почему дети в восторге?\nПотому что они:\n— постоянно двигаются и участвуют,\n— попадают в современную атмосферу (мемы, тренды, музыка),\n— смеются, соревнуются, танцуют и чувствуют себя героями праздника.\nА самое главное — каждый ребёнок включён, никто не остаётся в стороне.\n\n🎁 Итог для родителей:\n\nВаш ребёнок получит:\n✔ взрыв эмоций,\n✔ яркий новогодний опыт,\n✔ безопасный современный праздник,\n✔ море смеха, энергии и впечатлений.\n\nРекомендованный возраст: 1-3 класс\n📍 Стоимость: 400 рублей с ребенка \n(Выезд от 20 детей)'
+            'text': ' ☀«РАШН СТАЙЛ» — ПРАЗДНИК, КОТОРЫЙ ДЕТИ ЗАПОМНЯТ!\n\nУважаемые родители!\nЕсли вы хотите подарить ребёнку яркий, современный, живой новогодний праздник — программа «Рашн Стайл» создана специально для школьников и идеально попадает в их настроение.\nЭто не скучный утренник — это большая интерактивная тусовка прямо в классе, где каждый ребёнок вовлечён с первой секунды.\n\n❄️ Что будет внутри программы? ❄️\n\n🎭 Тур «Баба Яга — крышу сносит»\nСовременный квиз, где дети выбирают стороны зала и отвечают на вопросы.\nОшибся — выполняешь смешное «задание Яги» (танцы, звуки, мини-движ).\n\n💰 Игра «Сундук Криптон»\nДинамичная игра «музыка–стоп»:\n— музыка играет — дети танцуют,\n— музыка выключается — бегут к одному из сундуков.\nОдин приносит «золото», второй — забавное испытание.\n\n❄️ «Заморожу» от Деда Мороза\nНа экране появляются позы — дети должны повторить мгновенно.\nНе успел — «ледышка».\nИгра на реакцию, смех и скорость.\n\n💥 Челлендж-блок\nЗдесь мы используем реквизит. Выбираем под возраст и энергетику группы.\n\n🎵 Тур «Баян Микс»\nДети угадывают современный и народный ремикс-хит:\n— кричат ответы,\n— танцуют тренды,\n— выполняют задания под музыку.\nЭто один из самых любимых туров у детей.\n\n🛡 Богатырский баттл\nКомандные челленджи: сила, танец, скорость, шумометр.\nДети получают богатырские очки, болеют друг за друга, ощущают командный дух.\n\n📖 Финальный тур «Жили-были»\nСказочные и веселые предсказания.\nТихий, добрый и смешной интерактив, чтобы дети плавно переключились после активной программы.\n\n✨ Почему дети в восторге?\nПотому что они:\n— постоянно двигаются и участвуют,\n— попадают в современную атмосферу (мемы, тренды, музыка),\n— смеются, соревнуются, танцуют и чувствуют себя героями праздника.\nА самое главное — каждый ребёнок включён, никто не остаётся в стороне.\n\n🎁 Итог для родителей:\n\nВаш ребёнок получит:\n✔ взрыв эмоций,\n✔ яркий новогодний опыт,\n✔ безопасный современный праздник,\n✔ море смеха, энергии и впечатлений.\n\nРекомендованный возраст: 1-3 класс\n📍 Стоимость: 400 рублей с ребенка \n(Выезд от 20 детей)'
         }
     ]
 }
@@ -353,6 +353,16 @@ def get_birthdays_keyboard():
     keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
     return keyboard
 
+def get_class_choice_keyboard():
+    keyboard = VkKeyboard(one_time=True)
+    keyboard.add_button('🔥 Мульти-квиз', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_button('☀ Рашн Стайл', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_line()
+    keyboard.add_button('🛠 Доп. услуги', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_line()
+    keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
+    return keyboard
+
 def get_item_actions_keyboard():
     keyboard = VkKeyboard(one_time=True)
     keyboard.add_button('✅ Хочу заказать', color=VkKeyboardColor.POSITIVE)
@@ -393,7 +403,6 @@ def get_to_main_keyboard():
     return keyboard
 
 def get_programs_choice_keyboard(services):
-    """Динамическая клавиатура из названий программ (не более 3 кнопок в строке)"""
     keyboard = VkKeyboard(one_time=True)
     for i, service in enumerate(services):
         title = service.get('title')
@@ -411,7 +420,6 @@ def get_programs_choice_keyboard(services):
     return keyboard
 
 def get_extra_choice_keyboard(services):
-    """Клавиатура для выбора дополнительной услуги (названия из title)"""
     keyboard = VkKeyboard(one_time=True)
     for i, service in enumerate(services):
         title = service.get('title')
@@ -466,7 +474,6 @@ def send_to_operator(text):
 # ==================================================
 def show_program_choice(user_id, category_key, back_state):
     services = MAIN_SERVICES.get(category_key, [])
-    print(f"DEBUG: show_program_choice({category_key}) -> services count: {len(services)}")
     if not services:
         send_message(user_id, 'В этой категории пока нет программ.', get_item_actions_keyboard())
         return
@@ -478,7 +485,6 @@ def show_program_details(user_id, service):
     send_attachments(user_id, service.get('attachments', []), service['text'], get_item_actions_keyboard())
 
 def show_extra_choice(user_id, category_key, back_state):
-    """Показывает список дополнительных услуг (кнопки) для выбранной категории."""
     services = EXTRA_SERVICES.get(category_key, [])
     if not services:
         send_message(user_id, 'В этой категории пока нет услуг.', get_extra_actions_keyboard())
@@ -488,7 +494,6 @@ def show_extra_choice(user_id, category_key, back_state):
     send_message(user_id, '❓ Выберите услугу', keyboard)
 
 def show_extra_details(user_id, service):
-    """Отправляет подробное описание выбранной дополнительной услуги."""
     send_attachments(user_id, service.get('attachments', []), service['text'], get_extra_actions_keyboard())
 
 # ==================================================
@@ -517,14 +522,12 @@ def process_event(event):
     raw_text = event['message']['text']
     user_message = raw_text.lower().strip()
 
-    # --- НОВЫЙ ПОЛЬЗОВАТЕЛЬ? ОТПРАВЛЯЕМ ПРИВЕТСТВИЕ И ГЛАВНОЕ МЕНЮ ---
     if user_id not in user_stack:
         user_stack[user_id] = ['main']
         user_temp.pop(user_id, None)
         send_message(user_id, '🤗 Здравствуйте! Мы очень рады, что Вы решили выбрать именно нас! \n🤖У нас есть очень удобный бот, который подскажет Вам всё, что захотите!\n🙂Но если он не сможет помочь, то всегда можно вызвать оператора', get_main_keyboard())
-        return  # Завершаем обработку, чтобы не ждать команды "привет"
+        return
 
-    # --- ТЕКУЩЕЕ СОСТОЯНИЕ (после инициализации) ---
     current_state = user_stack[user_id][-1]
 
     # --- ГЛОБАЛЬНЫЕ КОМАНДЫ ---
@@ -582,6 +585,8 @@ def process_event(event):
             send_message(user_id, '❓ Какая программа вам нужна?', get_programs_keyboard())
         elif new_state == 'birthdays':
             send_message(user_id, '✅ Выберите возраст', get_birthdays_keyboard())
+        elif new_state == 'class_choice':
+            send_message(user_id, 'Выберите программу или дополнительные услуги:', get_class_choice_keyboard())
         elif new_state == 'choosing_program':
             cat = user_temp.get(user_id, {}).get('category')
             back = user_temp.get(user_id, {}).get('back_state')
@@ -600,10 +605,8 @@ def process_event(event):
         elif new_state == 'extra_categories':
             send_message(user_id, '❓ Выберите категорию доп. услуг', get_extra_categories_keyboard())
         elif new_state == 'choosing_extra':
-            # возврат к выбору категории доп. услуг
             send_message(user_id, '❓ Выберите категорию доп. услуг', get_extra_categories_keyboard())
         elif new_state == 'viewing_extra_detail':
-            # возврат к списку услуг
             extra_cat = user_temp.get(user_id, {}).get('extra_category')
             if extra_cat:
                 show_extra_choice(user_id, extra_cat, 'extra_categories')
@@ -626,14 +629,8 @@ def process_event(event):
             user_stack[user_id].append('birthdays')
             send_message(user_id, 'Выберите возраст', get_birthdays_keyboard())
         elif user_message in ['🏫 для классов', 'для классов']:
-            user_stack[user_id].append('choosing_program')
-            show_program_choice(user_id, 'class_all', 'programs')
-            # Отдельное сообщение с кнопкой "Доп. услуги"
-            keyboard = VkKeyboard(one_time=True)
-            keyboard.add_button('🛠 Доп. услуги', color=VkKeyboardColor.PRIMARY)
-            keyboard.add_line()
-            keyboard.add_button('◀ Назад', color=VkKeyboardColor.NEGATIVE)
-            send_message(user_id, 'Или выберите дополнительные услуги:', keyboard)
+            user_stack[user_id].append('class_choice')
+            send_message(user_id, 'Выберите программу или дополнительные услуги:', get_class_choice_keyboard())
         elif user_message in ['🛠 доп. услуги', 'доп. услуги']:
             user_stack[user_id].append('extra_categories')
             send_message(user_id, '🤗 Давайте выберем категорию', get_extra_categories_keyboard())
@@ -649,8 +646,41 @@ def process_event(event):
             user_stack[user_id].append('choosing_program')
             show_program_choice(user_id, 'birthday_8_12', 'birthdays')
 
+    elif current_state == 'class_choice':
+        if user_message == '🔥 мульти-квиз':
+            services = MAIN_SERVICES.get('class_all', [])
+            selected = None
+            for s in services:
+                if s.get('title') == '🔥 Мульти-квиз':
+                    selected = s
+                    break
+            if selected:
+                user_stack[user_id].append('viewing_program')
+                show_program_details(user_id, selected)
+            else:
+                send_message(user_id, 'Программа не найдена.', get_class_choice_keyboard())
+        elif user_message == '☀ рашн стайл':
+            services = MAIN_SERVICES.get('class_all', [])
+            selected = None
+            for s in services:
+                if s.get('title') == '☀ Рашн Стайл':
+                    selected = s
+                    break
+            if selected:
+                user_stack[user_id].append('viewing_program')
+                show_program_details(user_id, selected)
+            else:
+                send_message(user_id, 'Программа не найдена.', get_class_choice_keyboard())
+        elif user_message in ['🛠 доп. услуги', 'доп. услуги']:
+            user_stack[user_id].append('extra_categories')
+            send_message(user_id, '🤗 Давайте выберем категорию', get_extra_categories_keyboard())
+        elif user_message == '◀ назад':
+            user_stack[user_id].pop()
+            send_message(user_id, '❓ Какая программа вам нужна?', get_programs_keyboard())
+        else:
+            send_message(user_id, 'Пожалуйста, выберите программу или дополнительные услуги:', get_class_choice_keyboard())
+
     elif current_state == 'choosing_program':
-        # Если пользователь нажал кнопку "Доп. услуги" из отдельного сообщения
         if user_message in ['🛠 доп. услуги', 'доп. услуги']:
             user_stack[user_id].append('extra_categories')
             send_message(user_id, '🤗 Давайте выберем категорию', get_extra_categories_keyboard())
@@ -669,7 +699,6 @@ def process_event(event):
                 selected_service = service
                 break
         if selected_service:
-            # Проверяем, является ли это специальной кнопкой "Не нашли программу?"
             if selected_service.get('special'):
                 send_message(user_id, "🤗 Мы подберем для вас индивидуальную программу! Просто напишите ваш запрос, и наш менеджер свяжется с вами.", get_main_keyboard())
                 user_link = f"https://vk.com/id{user_id}"
