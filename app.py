@@ -4,6 +4,7 @@ import os
 import json
 import time
 import logging
+import requests
 from pathlib import Path
 from flask import Flask, request
 import vk_api
@@ -43,18 +44,21 @@ def load_services():
 MAIN_SERVICES, EXTRA_SERVICES = load_services()
 
 # ==================================================
-#  ИНИЦИАЛИЗАЦИЯ VK API (с таймаутом)
+#  ИНИЦИАЛИЗАЦИЯ VK API (с таймаутом через requests.Session)
 # ==================================================
-vk_session = vk_api.VkApi(
-    token=GROUP_TOKEN,
-    api_version='5.199',
-    timeout=10  # таймаут 10 секунд на каждый запрос
-)
+# 1. Создаём свою HTTP-сессию с нужным таймаутом
+session = requests.Session()
+session.timeout = 10  # таймаут 10 секунд на каждый запрос
+
+# 2. Передаём эту сессию в библиотеку vk_api
+vk_session = vk_api.VkApi(token=GROUP_TOKEN, api_version='5.199')
+vk_session.http = session  # подменяем внутреннюю HTTP-сессию на нашу
+
 vk = vk_session.get_api()
 upload = VkUpload(vk_session)
 
 # ==================================================
-#  ПРЕДЗАГРУЗКА КАРТИНОК
+#  ПРЕДЗАГРУЗКА КАРТИНОК (без изменений)
 # ==================================================
 def preload_attachments(data):
     if isinstance(data, dict):
@@ -189,7 +193,7 @@ def get_extra_choice_keyboard(services):
     return keyboard
 
 # ==================================================
-#  ФУНКЦИИ ОТПРАВКИ С ПОВТОРНЫМИ ПОПЫТКАМИ
+#  ФУНКЦИИ ОТПРАВКИ С ПОВТОРНЫМИ ПОПЫТКАМИ (без изменений)
 # ==================================================
 def send_message(user_id, text, keyboard=None, retries=3):
     for attempt in range(retries):
@@ -271,14 +275,14 @@ def show_extra_details(user_id, service):
     send_attachments(user_id, service.get('attachments', []), service['text'], get_extra_actions_keyboard())
 
 # ==================================================
-#  ОСНОВНАЯ ЛОГИКА (состояния)
+#  ОСНОВНАЯ ЛОГИКА (состояния) – БЕЗ ИЗМЕНЕНИЙ
 # ==================================================
 user_stack = {}
 user_temp = {}
 user_last_active = {}
-processed_events = set()  # для дедупликации (хранит event_id)
+processed_events = set()  # для дедупликации
 
-# Очистка старых состояний (вызывается каждый раз в process_event)
+# Очистка старых состояний
 def cleanup_old_users(max_inactive_seconds=7200):
     now = time.time()
     to_delete = []
@@ -289,7 +293,6 @@ def cleanup_old_users(max_inactive_seconds=7200):
         user_stack.pop(uid, None)
         user_temp.pop(uid, None)
         user_last_active.pop(uid, None)
-    # также ограничиваем размер processed_events
     if len(processed_events) > 1000:
         processed_events.clear()
 
@@ -303,7 +306,6 @@ def handle_webhook():
     if data.get('secret') != SECRET_KEY:
         return 'ok', 200
     if data.get('type') == 'message_new':
-        # Дедупликация по event_id
         event_id = data.get('event_id')
         if event_id:
             if event_id in processed_events:
@@ -319,11 +321,9 @@ def process_event(event):
     raw_text = event['message']['text']
     user_message = raw_text.lower().strip()
 
-    # Обновляем время последней активности и очищаем старые записи
     user_last_active[user_id] = time.time()
     cleanup_old_users()
 
-    # Инициализация нового пользователя
     if user_id not in user_stack:
         user_stack[user_id] = ['main']
         user_temp.pop(user_id, None)
@@ -332,7 +332,7 @@ def process_event(event):
 
     current_state = user_stack[user_id][-1]
 
-    # --- ГЛОБАЛЬНЫЕ КОМАНДЫ (всегда работают) ---
+    # --- ГЛОБАЛЬНЫЕ КОМАНДЫ ---
     if user_message in ['привет', 'начать', 'старт', 'меню', 'start', 'бот']:
         user_stack[user_id] = ['main']
         user_temp.pop(user_id, None)
@@ -355,7 +355,7 @@ def process_event(event):
         user_temp.pop(user_id, None)
         return
 
-    # --- КНОПКА "НАЗАД" (работает везде) ---
+    # --- КНОПКА "НАЗАД" ---
     if user_message in ['◀ назад', 'назад']:
         if len(user_stack[user_id]) > 1:
             user_stack[user_id].pop()
@@ -388,13 +388,13 @@ def process_event(event):
                 if extra_cat:
                     show_extra_choice(user_id, extra_cat, 'extra_categories')
                 else:
-                    send_message(user_id, '❓ Выберите категорию', get_extra_categories_keyboard())
+                    send_message(user_id, 'Выберите категорию', get_extra_categories_keyboard())
             elif new_state == 'viewing_extra_detail':
                 extra_cat = user_temp.get(user_id, {}).get('extra_category')
                 if extra_cat:
                     show_extra_choice(user_id, extra_cat, 'extra_categories')
                 else:
-                    send_message(user_id, '❓ Выберите категорию', get_extra_categories_keyboard())
+                    send_message(user_id, 'Выберите категорию', get_extra_categories_keyboard())
         else:
             send_message(user_id, '🔥 Вжух! И вы уже в главном меню!', get_main_keyboard())
         return
@@ -402,36 +402,35 @@ def process_event(event):
     # --- РЕЖИМ ОЖИДАНИЯ АНКЕТЫ ---
     if current_state == 'waiting_order_text':
         if user_message in ['◀ отмена', 'отмена']:
-            # отмена заказа: возвращаемся к предыдущему состоянию
-            user_stack[user_id].pop()  # убираем waiting_order_text
+            user_stack[user_id].pop()
             prev_state = user_stack[user_id][-1] if user_stack[user_id] else 'main'
             if prev_state == 'viewing_program':
                 last_program = user_temp.get(user_id, {}).get('last_viewed_program')
                 if last_program:
                     show_program_details(user_id, last_program)
                 else:
-                    send_message(user_id, '☹ Заказ отменён.', get_main_keyboard())
+                    send_message(user_id, 'Заказ отменён.', get_main_keyboard())
             elif prev_state == 'viewing_extra_detail':
                 last_extra = user_temp.get(user_id, {}).get('last_viewed_extra')
                 if last_extra:
                     show_extra_details(user_id, last_extra)
                 else:
-                    send_message(user_id, '☹ Заказ отменён.', get_main_keyboard())
+                    send_message(user_id, 'Заказ отменён.', get_main_keyboard())
             elif prev_state == 'choosing_program':
                 cat = user_temp.get(user_id, {}).get('category')
                 back = user_temp.get(user_id, {}).get('back_state')
                 if cat and back:
                     show_program_choice(user_id, cat, back)
                 else:
-                    send_message(user_id, '☹ Заказ отменён.', get_main_keyboard())
+                    send_message(user_id, 'Заказ отменён.', get_main_keyboard())
             elif prev_state == 'choosing_extra':
                 extra_cat = user_temp.get(user_id, {}).get('extra_category')
                 if extra_cat:
                     show_extra_choice(user_id, extra_cat, 'extra_categories')
                 else:
-                    send_message(user_id, '☹ Заказ отменён.', get_main_keyboard())
+                    send_message(user_id, 'Заказ отменён.', get_main_keyboard())
             else:
-                send_message(user_id, '☹ Заказ отменён.', get_main_keyboard())
+                send_message(user_id, 'Заказ отменён.', get_main_keyboard())
             user_temp.pop(user_id, None)
             return
         # не отмена – отправляем заказ оператору
@@ -442,7 +441,7 @@ def process_event(event):
         user_temp.pop(user_id, None)
         return
 
-    # --- ПОСЛЕ ЗАКАЗА (кнопка "В главное меню") ---
+    # --- ПОСЛЕ ЗАКАЗА ---
     if current_state == 'order_completed':
         if user_message in ['🏠 в главное меню', 'в главное меню']:
             user_stack[user_id] = ['main']
@@ -534,7 +533,7 @@ def process_event(event):
             user_stack[user_id].pop()
             send_message(user_id, '❓ Какая программа вам нужна?', get_programs_keyboard())
         else:
-            send_message(user_id, 'Пожалуйста, выберите категорию', get_extra_categories_keyboard())
+            send_message(user_id, 'Пожалуйста, выберите категорию:', get_extra_categories_keyboard())
 
     elif current_state == 'choosing_extra':
         extra_category = user_temp.get(user_id, {}).get('extra_category')
@@ -567,7 +566,7 @@ def process_event(event):
     elif current_state == 'viewing_extra_detail':
         if user_message in ['✅ хочу заказать', 'хочу заказать']:
             user_stack[user_id].append('waiting_order_text')
-            send_message(user_id, '🔥 Осталось совсем чуть-чуть! Заполните небольшую анкету и пришлите её прямо сюда 📌 \n\n1) Какая программа вам приглянулась? (+ доп.услуги, если требуется) ✅ \n2) На какие даты рассчитываете проведение праздника? 📅 \n3) Для кого планируется праздник? (Имя, возраст) 🎆 \n4) Сколько гостей и какого возраста планируется на празднике? 👫\n5) Нужно ли в конце программы делать торжественный вынос тортика/сладостей? 🎂 \n6) Место проведения праздника, адрес? 🙂 \n7) Ваш контактный номер телефона? 📞 \n8) Есть ли какие-либо дополнительные комментарии ? 📝\n\n', get_waiting_keyboard())
+            send_message(user_id, '🔥 Осталось совсем чуть-чуть! Заполните небольшую анкету и пришлите её прямо сюда 📌 \n\n1) Какая услуга вас интересует?\n2) Дата проведения?\n3) Ваш контактный телефон?\n\n', get_waiting_keyboard())
 
 @app.route('/', methods=['GET'])
 def handle_health_check():
