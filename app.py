@@ -2,6 +2,7 @@
 
 import os
 import json
+import time
 import logging
 from pathlib import Path
 from flask import Flask, request
@@ -42,9 +43,13 @@ def load_services():
 MAIN_SERVICES, EXTRA_SERVICES = load_services()
 
 # ==================================================
-#  ИНИЦИАЛИЗАЦИЯ VK API
+#  ИНИЦИАЛИЗАЦИЯ VK API (с таймаутом)
 # ==================================================
-vk_session = vk_api.VkApi(token=GROUP_TOKEN, api_version='5.199')
+vk_session = vk_api.VkApi(
+    token=GROUP_TOKEN,
+    api_version='5.199',
+    timeout=10  # таймаут 10 секунд на каждый запрос
+)
 vk = vk_session.get_api()
 upload = VkUpload(vk_session)
 
@@ -64,7 +69,7 @@ def preload_attachments(data):
                     photo = upload.photo_messages(str(full_path))[0]
                     attachments.append(f"photo{photo['owner_id']}_{photo['id']}")
                 except Exception as e:
-                    logging.error(f"Ошибка загрузки {img}: {e}")
+                    logging.error(f"Ошибка загрузки {img}: {e}", exc_info=True)
             data['attachments'] = attachments
             del data['images']
         else:
@@ -80,7 +85,7 @@ preload_attachments(EXTRA_SERVICES)
 print("✅ Все картинки загружены.")
 
 # ==================================================
-#  КЛАВИАТУРЫ
+#  КЛАВИАТУРЫ (без изменений)
 # ==================================================
 def get_main_keyboard():
     keyboard = VkKeyboard(one_time=False)
@@ -184,44 +189,62 @@ def get_extra_choice_keyboard(services):
     return keyboard
 
 # ==================================================
-#  ФУНКЦИИ ОТПРАВКИ
+#  ФУНКЦИИ ОТПРАВКИ С ПОВТОРНЫМИ ПОПЫТКАМИ
 # ==================================================
-def send_message(user_id, text, keyboard=None):
-    try:
-        vk.messages.send(
-            user_id=user_id,
-            message=text,
-            random_id=get_random_id(),
-            keyboard=keyboard.get_keyboard() if keyboard else None
-        )
-    except Exception as e:
-        logging.error(f"Ошибка отправки сообщения: {e}")
+def send_message(user_id, text, keyboard=None, retries=3):
+    for attempt in range(retries):
+        try:
+            vk.messages.send(
+                user_id=user_id,
+                message=text,
+                random_id=get_random_id(),
+                keyboard=keyboard.get_keyboard() if keyboard else None
+            )
+            return
+        except Exception as e:
+            logging.error(f"Ошибка отправки сообщения (попытка {attempt+1}): {e}", exc_info=True)
+            if attempt < retries - 1:
+                time.sleep(1)
+            else:
+                logging.error(f"Не удалось отправить сообщение пользователю {user_id}: {text[:50]}...")
 
-def send_attachments(user_id, attachments, caption, keyboard):
+def send_attachments(user_id, attachments, caption, keyboard, retries=3):
     if not attachments:
         send_message(user_id, caption, keyboard)
         return
     attachment_str = ','.join(attachments)
-    try:
-        vk.messages.send(
-            user_id=user_id,
-            attachment=attachment_str,
-            message=caption,
-            random_id=get_random_id(),
-            keyboard=keyboard.get_keyboard() if keyboard else None
-        )
-    except Exception as e:
-        logging.error(f"Ошибка отправки альбома: {e}")
-        send_message(user_id, caption, keyboard)
+    for attempt in range(retries):
+        try:
+            vk.messages.send(
+                user_id=user_id,
+                attachment=attachment_str,
+                message=caption,
+                random_id=get_random_id(),
+                keyboard=keyboard.get_keyboard() if keyboard else None
+            )
+            return
+        except Exception as e:
+            logging.error(f"Ошибка отправки альбома (попытка {attempt+1}): {e}", exc_info=True)
+            if attempt < retries - 1:
+                time.sleep(1)
+            else:
+                logging.error(f"Не удалось отправить альбом пользователю {user_id}: {caption[:50]}...")
+                send_message(user_id, caption, keyboard)
 
-def send_to_operator(text):
-    try:
-        vk.messages.send(user_id=OPERATOR_ID, message=text, random_id=get_random_id())
-    except Exception as e:
-        logging.error(f"Ошибка отправки оператору: {e}")
+def send_to_operator(text, retries=3):
+    for attempt in range(retries):
+        try:
+            vk.messages.send(user_id=OPERATOR_ID, message=text, random_id=get_random_id())
+            return
+        except Exception as e:
+            logging.error(f"Ошибка отправки оператору (попытка {attempt+1}): {e}", exc_info=True)
+            if attempt < retries - 1:
+                time.sleep(1)
+            else:
+                logging.error(f"Не удалось отправить сообщение оператору: {text[:50]}...")
 
 # ==================================================
-#  ЛОГИКА ПОКАЗА УСЛУГ
+#  ЛОГИКА ПОКАЗА УСЛУГ (без изменений)
 # ==================================================
 def show_program_choice(user_id, category_key, back_state):
     services = MAIN_SERVICES.get(category_key, [])
@@ -252,6 +275,23 @@ def show_extra_details(user_id, service):
 # ==================================================
 user_stack = {}
 user_temp = {}
+user_last_active = {}
+processed_events = set()  # для дедупликации (хранит event_id)
+
+# Очистка старых состояний (вызывается каждый раз в process_event)
+def cleanup_old_users(max_inactive_seconds=7200):
+    now = time.time()
+    to_delete = []
+    for uid, last_active in user_last_active.items():
+        if now - last_active > max_inactive_seconds:
+            to_delete.append(uid)
+    for uid in to_delete:
+        user_stack.pop(uid, None)
+        user_temp.pop(uid, None)
+        user_last_active.pop(uid, None)
+    # также ограничиваем размер processed_events
+    if len(processed_events) > 1000:
+        processed_events.clear()
 
 app = Flask(__name__)
 
@@ -263,6 +303,12 @@ def handle_webhook():
     if data.get('secret') != SECRET_KEY:
         return 'ok', 200
     if data.get('type') == 'message_new':
+        # Дедупликация по event_id
+        event_id = data.get('event_id')
+        if event_id:
+            if event_id in processed_events:
+                return 'ok', 200
+            processed_events.add(event_id)
         process_event(data['object'])
     return 'ok', 200
 
@@ -272,6 +318,10 @@ def process_event(event):
         return
     raw_text = event['message']['text']
     user_message = raw_text.lower().strip()
+
+    # Обновляем время последней активности и очищаем старые записи
+    user_last_active[user_id] = time.time()
+    cleanup_old_users()
 
     # Инициализация нового пользователя
     if user_id not in user_stack:
