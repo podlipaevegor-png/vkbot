@@ -556,10 +556,46 @@ def process_event(event):
     # --- РЕЖИМ ОЖИДАНИЯ АНКЕТЫ ---
     if current_state == 'waiting_order_text':
         if user_message in ['◀ отмена', 'отмена']:
-            user_stack[user_id].pop()
+            user_stack[user_id].pop()  # удаляем waiting_order_text
+            new_state = user_stack[user_id][-1] if user_stack[user_id] else 'main'
+            # Возвращаемся в предыдущее состояние
+            if new_state == 'class_choice':
+                send_message(user_id, '❓ Заказ отменён. Выберите программу или дополнительные услуги:', get_class_choice_keyboard())
+            elif new_state == 'choosing_program':
+                cat = user_temp.get(user_id, {}).get('category')
+                back = user_temp.get(user_id, {}).get('back_state')
+                if cat and back:
+                    show_program_choice(user_id, cat, back)
+                else:
+                    send_message(user_id, 'Главное меню', get_main_keyboard())
+            elif new_state == 'extra_categories':
+                send_message(user_id, 'Выберите категорию доп. услуг:', get_extra_categories_keyboard())
+            elif new_state == 'choosing_extra':
+                extra_cat = user_temp.get(user_id, {}).get('extra_category')
+                if extra_cat:
+                    show_extra_choice(user_id, extra_cat, 'extra_categories')
+                else:
+                    send_message(user_id, 'Выберите категорию доп. услуг:', get_extra_categories_keyboard())
+            elif new_state == 'viewing_program':
+                # Нужно показать программу заново
+                # У нас нет сохранённой программы, но можно извлечь из user_temp
+                last_service = user_temp.get(user_id, {}).get('last_viewed_program')
+                if last_service:
+                    show_program_details(user_id, last_service)
+                else:
+                    send_message(user_id, 'Главное меню', get_main_keyboard())
+            elif new_state == 'viewing_extra_detail':
+                last_service = user_temp.get(user_id, {}).get('last_viewed_extra')
+                if last_service:
+                    show_extra_details(user_id, last_service)
+                else:
+                    send_message(user_id, 'Выберите категорию доп. услуг:', get_extra_categories_keyboard())
+            else:
+                send_message(user_id, '☹ Заказ отменён', get_main_keyboard())
             user_temp.pop(user_id, None)
-            send_message(user_id, '☹ Заказ отменён', get_main_keyboard())
             return
+
+        # Обычная отправка анкеты
         send_message(user_id, "📞 Отлично! Вызываю оператора, нужно совсем немного подождать!", get_to_main_keyboard())
         user_link = f"https://vk.com/id{user_id}"
         send_to_operator(f"НОВЫЙ ЗАКАЗ от {user_link}\nСообщение: {raw_text}")
@@ -656,6 +692,8 @@ def process_event(event):
                     break
             if selected:
                 user_stack[user_id].append('viewing_program')
+                # Сохраняем выбранную программу для возможного возврата
+                user_temp[user_id]['last_viewed_program'] = selected
                 show_program_details(user_id, selected)
             else:
                 send_message(user_id, 'Программа не найдена.', get_class_choice_keyboard())
@@ -668,6 +706,7 @@ def process_event(event):
                     break
             if selected:
                 user_stack[user_id].append('viewing_program')
+                user_temp[user_id]['last_viewed_program'] = selected
                 show_program_details(user_id, selected)
             else:
                 send_message(user_id, 'Программа не найдена.', get_class_choice_keyboard())
@@ -708,6 +747,7 @@ def process_event(event):
                 return
             else:
                 user_stack[user_id].append('viewing_program')
+                user_temp[user_id]['last_viewed_program'] = selected_service
                 show_program_details(user_id, selected_service)
         else:
             send_message(user_id, '🤗 Пожалуйста, выберите программу из списка', get_programs_choice_keyboard(services))
@@ -761,6 +801,7 @@ def process_event(event):
                 return
             else:
                 user_stack[user_id].append('viewing_extra_detail')
+                user_temp[user_id]['last_viewed_extra'] = selected_service
                 show_extra_details(user_id, selected_service)
         else:
             send_message(user_id, 'Пожалуйста, выберите услугу из списка', get_extra_choice_keyboard(services))
