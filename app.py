@@ -483,6 +483,8 @@ def show_program_choice(user_id, category_key, back_state):
 
 def show_program_details(user_id, service):
     send_attachments(user_id, service.get('attachments', []), service['text'], get_item_actions_keyboard())
+    # Сохраняем последнюю просмотренную программу для возможного возврата после отмены
+    user_temp[user_id]['last_viewed_program'] = service
 
 def show_extra_choice(user_id, category_key, back_state):
     services = EXTRA_SERVICES.get(category_key, [])
@@ -495,6 +497,7 @@ def show_extra_choice(user_id, category_key, back_state):
 
 def show_extra_details(user_id, service):
     send_attachments(user_id, service.get('attachments', []), service['text'], get_extra_actions_keyboard())
+    user_temp[user_id]['last_viewed_extra'] = service
 
 # ==================================================
 #  ОСНОВНАЯ ЛОГИКА (состояния)
@@ -577,8 +580,6 @@ def process_event(event):
                 else:
                     send_message(user_id, 'Выберите категорию доп. услуг:', get_extra_categories_keyboard())
             elif new_state == 'viewing_program':
-                # Нужно показать программу заново
-                # У нас нет сохранённой программы, но можно извлечь из user_temp
                 last_service = user_temp.get(user_id, {}).get('last_viewed_program')
                 if last_service:
                     show_program_details(user_id, last_service)
@@ -683,7 +684,10 @@ def process_event(event):
             show_program_choice(user_id, 'birthday_8_12', 'birthdays')
 
     elif current_state == 'class_choice':
-        if user_message == '🔥 мульти-квиз':
+        # Сравниваем по оригинальному тексту (raw_text) без приведения к нижнему регистру,
+        # чтобы сохранить эмодзи и точное совпадение.
+        raw_lower = raw_text.lower()
+        if raw_lower == '🔥 мульти-квиз'.lower():
             services = MAIN_SERVICES.get('class_all', [])
             selected = None
             for s in services:
@@ -692,12 +696,10 @@ def process_event(event):
                     break
             if selected:
                 user_stack[user_id].append('viewing_program')
-                # Сохраняем выбранную программу для возможного возврата
-                user_temp[user_id]['last_viewed_program'] = selected
                 show_program_details(user_id, selected)
             else:
                 send_message(user_id, 'Программа не найдена.', get_class_choice_keyboard())
-        elif user_message == '☀ рашн стайл':
+        elif raw_lower == '☀ рашн стайл'.lower():
             services = MAIN_SERVICES.get('class_all', [])
             selected = None
             for s in services:
@@ -706,7 +708,6 @@ def process_event(event):
                     break
             if selected:
                 user_stack[user_id].append('viewing_program')
-                user_temp[user_id]['last_viewed_program'] = selected
                 show_program_details(user_id, selected)
             else:
                 send_message(user_id, 'Программа не найдена.', get_class_choice_keyboard())
@@ -747,7 +748,6 @@ def process_event(event):
                 return
             else:
                 user_stack[user_id].append('viewing_program')
-                user_temp[user_id]['last_viewed_program'] = selected_service
                 show_program_details(user_id, selected_service)
         else:
             send_message(user_id, '🤗 Пожалуйста, выберите программу из списка', get_programs_choice_keyboard(services))
@@ -801,7 +801,6 @@ def process_event(event):
                 return
             else:
                 user_stack[user_id].append('viewing_extra_detail')
-                user_temp[user_id]['last_viewed_extra'] = selected_service
                 show_extra_details(user_id, selected_service)
         else:
             send_message(user_id, 'Пожалуйста, выберите услугу из списка', get_extra_choice_keyboard(services))
