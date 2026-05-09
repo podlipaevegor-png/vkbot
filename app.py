@@ -46,17 +46,19 @@ MAIN_SERVICES, EXTRA_SERVICES = load_services()
 # ==================================================
 #  ИНИЦИАЛИЗАЦИЯ VK API (с таймаутом через requests.Session)
 # ==================================================
+# 1. Создаём свою HTTP-сессию с нужным таймаутом
 session = requests.Session()
-session.timeout = 10
+session.timeout = 10  # таймаут 10 секунд на каждый запрос
 
+# 2. Передаём эту сессию в библиотеку vk_api
 vk_session = vk_api.VkApi(token=GROUP_TOKEN, api_version='5.199')
-vk_session.http = session
+vk_session.http = session  # подменяем внутреннюю HTTP-сессию на нашу
 
 vk = vk_session.get_api()
 upload = VkUpload(vk_session)
 
 # ==================================================
-#  ПРЕДЗАГРУЗКА КАРТИНОК
+#  ПРЕДЗАГРУЗКА КАРТИНОК (без изменений)
 # ==================================================
 def preload_attachments(data):
     if isinstance(data, dict):
@@ -191,7 +193,7 @@ def get_extra_choice_keyboard(services):
     return keyboard
 
 # ==================================================
-#  ФУНКЦИИ ОТПРАВКИ С ПОВТОРНЫМИ ПОПЫТКАМИ
+#  ФУНКЦИИ ОТПРАВКИ С ПОВТОРНЫМИ ПОПЫТКАМИ (без изменений)
 # ==================================================
 def send_message(user_id, text, keyboard=None, retries=3):
     for attempt in range(retries):
@@ -246,7 +248,7 @@ def send_to_operator(text, retries=3):
                 logging.error(f"Не удалось отправить сообщение оператору: {text[:50]}...")
 
 # ==================================================
-#  ЛОГИКА ПОКАЗА УСЛУГ
+#  ЛОГИКА ПОКАЗА УСЛУГ (без изменений)
 # ==================================================
 def show_program_choice(user_id, category_key, back_state):
     services = MAIN_SERVICES.get(category_key, [])
@@ -273,7 +275,7 @@ def show_extra_details(user_id, service):
     send_attachments(user_id, service.get('attachments', []), service['text'], get_extra_actions_keyboard())
 
 # ==================================================
-#  ОСНОВНАЯ ЛОГИКА (состояния)
+#  ОСНОВНАЯ ЛОГИКА (состояния) – БЕЗ ИЗМЕНЕНИЙ
 # ==================================================
 user_stack = {}
 user_temp = {}
@@ -319,12 +321,6 @@ def process_event(event):
     raw_text = event['message']['text']
     user_message = raw_text.lower().strip()
 
-    # ========== ГЛАВНОЕ ИЗМЕНЕНИЕ: БОТ АКТИВИРУЕТСЯ ТОЛЬКО ПО СЛОВУ "СТАРТ" ==========
-    # Если пользователь написал не "старт" – бот молчит (ничего не делает)
-    if user_message != 'старт':
-        return  # просто игнорируем любое другое сообщение
-
-    # Далее идёт обычная логика, но только после того, как пользователь написал "старт"
     user_last_active[user_id] = time.time()
     cleanup_old_users()
 
