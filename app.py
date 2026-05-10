@@ -46,19 +46,17 @@ MAIN_SERVICES, EXTRA_SERVICES = load_services()
 # ==================================================
 #  ИНИЦИАЛИЗАЦИЯ VK API (с таймаутом через requests.Session)
 # ==================================================
-# 1. Создаём свою HTTP-сессию с нужным таймаутом
 session = requests.Session()
-session.timeout = 10  # таймаут 10 секунд на каждый запрос
+session.timeout = 10
 
-# 2. Передаём эту сессию в библиотеку vk_api
 vk_session = vk_api.VkApi(token=GROUP_TOKEN, api_version='5.199')
-vk_session.http = session  # подменяем внутреннюю HTTP-сессию на нашу
+vk_session.http = session
 
 vk = vk_session.get_api()
 upload = VkUpload(vk_session)
 
 # ==================================================
-#  ПРЕДЗАГРУЗКА КАРТИНОК (без изменений)
+#  ПРЕДЗАГРУЗКА КАРТИНОК
 # ==================================================
 def preload_attachments(data):
     if isinstance(data, dict):
@@ -89,7 +87,7 @@ preload_attachments(EXTRA_SERVICES)
 print("✅ Все картинки загружены.")
 
 # ==================================================
-#  КЛАВИАТУРЫ (без изменений)
+#  КЛАВИАТУРЫ
 # ==================================================
 def get_main_keyboard():
     keyboard = VkKeyboard(one_time=False)
@@ -162,7 +160,6 @@ def get_to_main_keyboard():
     return keyboard
 
 def get_programs_choice_keyboard(services):
-    """Динамическая клавиатура из названий программ (3 кнопки в строке)"""
     keyboard = VkKeyboard(one_time=True)
     for i, service in enumerate(services):
         title = service.get('title')
@@ -193,7 +190,7 @@ def get_extra_choice_keyboard(services):
     return keyboard
 
 # ==================================================
-#  ФУНКЦИИ ОТПРАВКИ С ПОВТОРНЫМИ ПОПЫТКАМИ (без изменений)
+#  ФУНКЦИИ ОТПРАВКИ С ПОВТОРНЫМИ ПОПЫТКАМИ
 # ==================================================
 def send_message(user_id, text, keyboard=None, retries=3):
     for attempt in range(retries):
@@ -248,7 +245,7 @@ def send_to_operator(text, retries=3):
                 logging.error(f"Не удалось отправить сообщение оператору: {text[:50]}...")
 
 # ==================================================
-#  ЛОГИКА ПОКАЗА УСЛУГ (без изменений)
+#  ЛОГИКА ПОКАЗА УСЛУГ
 # ==================================================
 def show_program_choice(user_id, category_key, back_state):
     services = MAIN_SERVICES.get(category_key, [])
@@ -275,14 +272,13 @@ def show_extra_details(user_id, service):
     send_attachments(user_id, service.get('attachments', []), service['text'], get_extra_actions_keyboard())
 
 # ==================================================
-#  ОСНОВНАЯ ЛОГИКА (состояния) – БЕЗ ИЗМЕНЕНИЙ
+#  ОСНОВНАЯ ЛОГИКА (состояния)
 # ==================================================
 user_stack = {}
 user_temp = {}
 user_last_active = {}
-processed_events = set()  # для дедупликации
+processed_events = set()
 
-# Очистка старых состояний
 def cleanup_old_users(max_inactive_seconds=7200):
     now = time.time()
     to_delete = []
@@ -324,12 +320,17 @@ def process_event(event):
     user_last_active[user_id] = time.time()
     cleanup_old_users()
 
+    # ========== НОВАЯ ЛОГИКА: активация ТОЛЬКО по слову "старт" ==========
     if user_id not in user_stack:
-        user_stack[user_id] = ['main']
-        user_temp.pop(user_id, None)
-        send_message(user_id, '🤗 Здравствуйте! Мы очень рады, что Вы решили выбрать именно нас! \n🤖У нас есть очень удобный бот, который подскажет Вам всё, что захотите!\n🙂Но если он не сможет помочь, то всегда можно вызвать оператора', get_main_keyboard())
+        # Новый пользователь – бот активируется только если написано "старт"
+        if user_message == 'старт':
+            user_stack[user_id] = ['main']
+            user_temp.pop(user_id, None)
+            send_message(user_id, '🤗 Здравствуйте! Мы очень рады, что Вы решили выбрать именно нас! \n🤖У нас есть очень удобный бот, который подскажет Вам всё, что захотите!\n🙂Но если он не сможет помочь, то всегда можно вызвать оператора', get_main_keyboard())
+        # Если написано что-то другое – бот молчит
         return
 
+    # Для уже активных пользователей – продолжаем
     current_state = user_stack[user_id][-1]
 
     # --- ГЛОБАЛЬНЫЕ КОМАНДЫ ---
